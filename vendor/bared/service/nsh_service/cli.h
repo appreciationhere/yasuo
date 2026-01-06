@@ -16,7 +16,7 @@
 #ifndef _CMDLINE_H_
 #define _CMDLINE_H_
 
-#include "comdef.h"
+#include "common.h"
 
 #define CLI_MAX_CMD_LEN           64             /*命令行长度*/                 
 #define CLI_MAX_ARGS              16             /*最大参数个数*/
