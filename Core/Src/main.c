@@ -24,7 +24,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "log_service.h"
+#include "module.h"
+#include "syslog.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -91,9 +92,8 @@ int main(void)
   MX_UART4_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-  char hhh[10] = "31";
-  usart_print_send(hhh, 4);
-  log_service_init(NULL);
+  syslog(LOG_INFO, "hello world");
+  module_task_init();
   /* USER CODE END 2 */
 
   /* Infinite loop */

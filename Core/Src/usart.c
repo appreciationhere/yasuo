@@ -242,7 +242,7 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 }
 
 /* USER CODE BEGIN 1 */
-void usart_print_send(char* data, int len)
+void usart_print_send(const uint8_t* data, int len)
 {
   HAL_UART_Transmit(&huart4, data, len, 0xFFFF);
 }

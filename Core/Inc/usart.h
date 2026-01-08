@@ -44,7 +44,7 @@ void MX_UART4_Init(void);
 void MX_USART1_UART_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-void usart_print_send(char* data, int len);
+void usart_print_send(const uint8_t* data, int len);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

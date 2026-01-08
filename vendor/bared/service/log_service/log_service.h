@@ -4,6 +4,6 @@
 #include "syslog.h"
 #include "comdef.h"
 
-int log_service_init(void* argc[]);
+void log_service_init(void);
 
 #endif // !_H_LOG_SERVICE_H__
