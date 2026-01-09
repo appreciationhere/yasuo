@@ -15,6 +15,9 @@
  ******************************************************************************/
 #include "module.h"
 
+
+static void nop_process(void);
+
 //第一个初始化�?
 const init_item_t init_tbl_start SECTION("init.item.0") = {
     "", nop_process

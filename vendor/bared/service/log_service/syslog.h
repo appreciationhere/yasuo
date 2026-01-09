@@ -14,5 +14,4 @@
 #define APPLICATION_LOG_TAG         "appli"
 
 void syslog(uint32_t level, const char *format, ...);
-
 #endif // !_H_LOG_SERVICE_H__
