@@ -37,8 +37,8 @@ extern "C" {
     #define SECTION(x)                  __attribute__((section(x)))
     // #define UNUSED                      __attribute__((unused))
     #define USED                        __attribute__((used))
-    // #define ALIGN(n)                    __attribute__((aligned(n)))
-    // #define WEAK                        __attribute__((weak))
+    #define ALIGN(n)                    __attribute__((aligned(n)))
+    #define WEAK                        __attribute__((weak))
 #elif defined (__ICCARM__)              /*IAR */
     #define SECTION(x)                  @ x
     #define UNUSED                      

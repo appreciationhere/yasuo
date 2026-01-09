@@ -24,8 +24,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "module.h"
-#include "syslog.h"
+#include "system.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -92,7 +91,7 @@ int main(void)
   MX_UART4_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-  syslog(LOG_INFO, "hello world");
+  syslog(LOG_INFO, "hello world 1");
   module_task_init();
   /* USER CODE END 2 */
 
@@ -107,6 +106,7 @@ int main(void)
 		HAL_GPIO_WritePin(GPIOI, GPIO_PIN_8, 1);
 		HAL_Delay(1000);
 		HAL_GPIO_WritePin(GPIOI, GPIO_PIN_8, 0);
+    syslog(LOG_INFO, "get tick:%lu", get_tick());
   }
   /* USER CODE END 3 */
 }

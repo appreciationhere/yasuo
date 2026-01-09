@@ -14,7 +14,7 @@
  *
  ******************************************************************************/
 #include "module.h"
-
+#include "syslog.h"
 
 static void nop_process(void);
 
@@ -78,9 +78,12 @@ bool is_timeout(unsigned int start, unsigned int timeout)
 void module_task_init(void)
 {
     const init_item_t *it = &init_tbl_start;
+    syslog(LOG_INFO, "module_task_init start ...");
     while (it < &init_tbl_end) {
+        syslog(LOG_INFO, "module_task_init name:%s", it->name);
         it++->init();
     }
+    syslog(LOG_INFO, "module_task_init end");
 }
 
 /*

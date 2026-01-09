@@ -206,6 +206,16 @@ SECTIONS
     libgcc.a ( * )
   }
 
+  .init_table : {
+    KEEP(*(init.item.0))
+    KEEP(*(init.item.1))
+    KEEP(*(init.item.2))
+    KEEP(*(init.item.3))
+    KEEP(*(init.item.4))
+    KEEP(*(task.item.0))
+    KEEP(*(task.item.1))
+    KEEP(*(task.item.2))
+  } > FLASH
 }
 
 
