@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "comdef.h"
-#include "config.h"
+#include "deconfig.h"
 
 
 #endif // !_H_COMMON_H

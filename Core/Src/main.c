@@ -102,11 +102,12 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-		HAL_Delay(1000);
-		HAL_GPIO_WritePin(GPIOI, GPIO_PIN_8, 1);
-		HAL_Delay(1000);
-		HAL_GPIO_WritePin(GPIOI, GPIO_PIN_8, 0);
-    syslog(LOG_INFO, "get tick:%lu", get_tick());
+    system_handle();
+		// HAL_Delay(1000);
+		// HAL_GPIO_WritePin(GPIOI, GPIO_PIN_8, 1);
+		// HAL_Delay(1000);
+		// HAL_GPIO_WritePin(GPIOI, GPIO_PIN_8, 0);
+    // syslog(LOG_INFO, "get tick:%lu", get_tick());
   }
   /* USER CODE END 3 */
 }
@@ -170,7 +171,10 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+// void gpio_work(async_work_t *w, void *object, void *params)
+// {
 
+// }
 /* USER CODE END 4 */
 
 /**
