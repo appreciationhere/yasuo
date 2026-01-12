@@ -1,5 +1,7 @@
 #include "syslog.h"
 #include <stdarg.h>
+#include <stdio.h>
+#include <string.h>
 #ifdef CONFIG_SYSLOG_PRINT_USART
 #include "usart.h"
 #endif
@@ -21,7 +23,7 @@ void syslog(uint32_t level, const char *format, ...)
     {
         #ifdef CONFIG_SYSLOG_PRINT_EN
         #ifdef CONFIG_SYSLOG_PRINT_USART
-            usart_print_send(buffer, len);
+            usart_print_send((uint8_t*)buffer, len);
         #endif
         #endif
     }

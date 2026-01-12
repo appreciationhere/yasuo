@@ -55,5 +55,3 @@ void system_handle(void)
 system_init("init_async_work", system_async_work_init);
 
 task_register("async_work", system_async_handle, 1);
-
-

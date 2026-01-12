@@ -4,7 +4,7 @@
 #include "module.h"
 #include "syslog.h"
 
-#define ASSERT(n) {if (0 == n){syslog("assert at file %s:%s[%d]", __FILE__,\
+#define ASSERT(n) {if (0 == (n)){syslog(LOG_ERROR,"assert at file %s:%s[%d]", __FILE__,\
                      __func__, __LINE__);while(1);}};
 
 
