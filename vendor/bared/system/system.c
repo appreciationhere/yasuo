@@ -1,10 +1,22 @@
 #include "system.h"
 #include "async_work.h"
 
-static async_work_t system_async_work;
-static work_node_t system_work_node[CONFIG_ASYNC_WORK_NOTES_MAX];
-static sys_async_work_func_t work_cb[CONFIG_ASYNC_WORK_NOTES_MAX];
 
+struct sys_async_work_data_t
+{
+    async_work_t system_async_work;
+    work_node_t system_work_node[CONFIG_ASYNC_WORK_NOTES_MAX];
+};
+
+static struct sys_async_work_data_t sys_async_work;
+
+static void system_async_work_cb(async_work_t *w, void *object, void *params)
+{
+    sys_async_work_func_t cb = (sys_async_work_func_t)object;
+    if (cb) {
+        cb(params);
+    }
+}
 static void system_idle_process(void)
 {
     static uint32_t cnt_s = 0;
@@ -18,17 +30,20 @@ static void system_idle_process(void)
 
 void system_async_work_init(void)
 {
-    async_work_init(&system_async_work, system_work_node, CONFIG_ASYNC_WORK_NOTES_MAX);
+    async_work_init(&sys_async_work.system_async_work, sys_async_work.system_work_node,\
+                    CONFIG_ASYNC_WORK_NOTES_MAX);
 }
-bool system_async_work_add(void *object, void *params, sys_async_work_func_t work)
+bool system_async_work_add(sys_async_work_func_t work, void *params)
 {
-    // return async_work_add(&system_async_work, object, params, work);
-    return 1;
+    bool ret = 0;
+    ret = async_work_add(&sys_async_work.system_async_work, (void*)work, params, system_async_work_cb);
+    ASSERT(ret);     
+    return ret;
 }
 
 void system_async_handle(void)
 {
-    async_work_process(&system_async_work);
+    async_work_process(&sys_async_work.system_async_work);
 }
 
 void system_handle(void)
