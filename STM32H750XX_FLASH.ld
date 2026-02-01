@@ -166,7 +166,7 @@ SECTIONS
 
     . = ALIGN(4);
     _edata = .;        /* define a global symbol at data end */
-  } >DTCMRAM AT> FLASH
+  } >RAM AT> FLASH
 
 
   /* Uninitialized data section */
@@ -183,7 +183,7 @@ SECTIONS
     . = ALIGN(4);
     _ebss = .;         /* define a global symbol at bss end */
     __bss_end__ = _ebss;
-  } >DTCMRAM
+  } >RAM
 
   /* User_heap_stack section, used to check that there is enough RAM left */
   ._user_heap_stack :
@@ -194,7 +194,7 @@ SECTIONS
     . = . + _Min_Heap_Size;
     . = . + _Min_Stack_Size;
     . = ALIGN(8);
-  } >DTCMRAM
+  } >RAM
 
 
 
@@ -205,17 +205,7 @@ SECTIONS
     libm.a ( * )
     libgcc.a ( * )
   }
-
-  .init_table : {
-    KEEP(*(init.item.0))
-    KEEP(*(init.item.1))
-    KEEP(*(init.item.2))
-    KEEP(*(init.item.3))
-    KEEP(*(init.item.4))
-    KEEP(*(task.item.0))
-    KEEP(*(task.item.1))
-    KEEP(*(task.item.2))
-  } > FLASH
 }
+INCLUDE "vendor/stm32h7xb_bl.ld";
 
 

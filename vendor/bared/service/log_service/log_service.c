@@ -1,7 +1,7 @@
-#include "log_service.h"
 #include "system.h"
+#include "log_service.h"
 
-void log_service_init(void)
+static void log_service_init(void)
 {
     syslog(LOG_INFO, "log_service_init start ...");
 

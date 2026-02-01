@@ -17,6 +17,7 @@
   ******************************************************************************
   */
 #include "syslog.h"
+#include "tty.h"
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "usart.h"
@@ -275,13 +276,13 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 }
 
 /* USER CODE BEGIN 1 */
+static uint32_t usart4_get_receive_len(void)
+{
+  return sizeof(buffer) - __HAL_DMA_GET_COUNTER(huart4.hdmarx);
+}
 void usart_print_send(const uint8_t* data, int len)
 {
   HAL_UART_Transmit(&huart4, data, len, 0xFFFF);
-}
-uint32_t usart4_get_receive_len(void)
-{
-  return sizeof(buffer) - __HAL_DMA_GET_COUNTER(huart4.hdmarx);
 }
 void Usart_Receive_Data(UART_HandleTypeDef *huart)
 {
@@ -289,7 +290,8 @@ void Usart_Receive_Data(UART_HandleTypeDef *huart)
     {
         HAL_UART_DMAStop(&huart4);
         __HAL_UART_CLEAR_IDLEFLAG(huart);
-        syslog(LOG_INFO, "usart4_get_receive_len:%lu, %c, %c", usart4_get_receive_len(), buffer[0], buffer[1]);
+        syslog(LOG_DEBUG, "usart_get_receive_len:%lu", usart4_get_receive_len());
+        tty_push_data(buffer, usart4_get_receive_len());
         HAL_UART_Receive_DMA(&huart4, buffer, sizeof(buffer));
     }
 }

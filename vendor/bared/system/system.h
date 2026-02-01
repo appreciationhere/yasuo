@@ -3,6 +3,7 @@
 
 #include "module.h"
 #include "syslog.h"
+#include "cli.h"
 
 #define ASSERT(n) {if (0 == (n)){syslog(LOG_ERROR,"assert at file %s:%s[%d]", __FILE__,\
                      __func__, __LINE__);while(1);}};

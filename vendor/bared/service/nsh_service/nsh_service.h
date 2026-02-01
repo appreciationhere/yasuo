@@ -3,6 +3,5 @@
 
 #include "common.h"
 
-
 #endif // !_H_NSH_SERVICE_H_
 

@@ -1,6 +1,6 @@
 #include "system.h"
 #include "async_work.h"
-
+#include "tty.h"
 
 struct sys_async_work_data_t
 {
@@ -9,6 +9,7 @@ struct sys_async_work_data_t
 };
 
 static struct sys_async_work_data_t sys_async_work;
+static cli_obj_t cli;                               /*命令行对象 */
 
 static void system_async_work_cb(async_work_t *w, void *object, void *params)
 {
@@ -51,6 +52,13 @@ void system_handle(void)
     module_task_process();
     system_idle_process();
 }
+
+void bsp_init(void)
+{
+    tty.init(0);
+}
+
+driver_init("bsp_init", bsp_init);
 
 system_init("init_async_work", system_async_work_init);
 
