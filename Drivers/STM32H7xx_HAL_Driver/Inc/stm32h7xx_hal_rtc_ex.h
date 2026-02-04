@@ -936,22 +936,6 @@ typedef struct
 #endif /* TAMP */
 
 /**
-  * @brief  Check whether the specified RTC Tamper interrupt has occurred or not.
-  * @param  __HANDLE__ specifies the RTC handle.
-  * @param  __INTERRUPT__ specifies the RTC Tamper interrupt to check.
-  *         This parameter can be:
-  *            @arg  RTC_FLAG_TAMP1F: Tamper1 interrupt flag
-  *            @arg  RTC_FLAG_TAMP2F: Tamper2 interrupt flag
-  *            @arg  RTC_FLAG_TAMP3F: Tamper3 interrupt flag
-  * @retval Flag status
-  */
-#if defined(TAMP)
-#define __HAL_RTC_TAMPER_GET_IT(__HANDLE__, __INTERRUPT__)     ((((((TAMP_TypeDef *)((uint32_t)((__HANDLE__)->Instance) + TAMP_OFFSET))->SR) & (__INTERRUPT__)) != 0U) ? 1U : 0U)
-#else
-#define __HAL_RTC_TAMPER_GET_IT(__HANDLE__, __INTERRUPT__)     (((((__HANDLE__)->Instance->ISR) & (__INTERRUPT__)) != 0U) ? 1U : 0U)
-#endif /* TAMP */
-
-/**
   * @brief  Check whether the specified RTC Tamper interrupt has been enabled or not.
   * @param  __HANDLE__ specifies the RTC handle.
   * @param  __INTERRUPT__ specifies the RTC Tamper interrupt source to check.
@@ -1674,8 +1658,8 @@ HAL_StatusTypeDef HAL_RTCEx_PollForTimeStampEvent(RTC_HandleTypeDef *hrtc, uint3
 /** @defgroup RTCEx_Exported_Functions_Group5 Extended RTC Tamper functions
   * @{
   */
-HAL_StatusTypeDef HAL_RTCEx_SetTamper(RTC_HandleTypeDef *hrtc, RTC_TamperTypeDef *sTamper);
-HAL_StatusTypeDef HAL_RTCEx_SetTamper_IT(RTC_HandleTypeDef *hrtc, RTC_TamperTypeDef *sTamper);
+HAL_StatusTypeDef HAL_RTCEx_SetTamper(RTC_HandleTypeDef *hrtc, const RTC_TamperTypeDef *sTamper);
+HAL_StatusTypeDef HAL_RTCEx_SetTamper_IT(RTC_HandleTypeDef *hrtc, const RTC_TamperTypeDef *sTamper);
 HAL_StatusTypeDef HAL_RTCEx_DeactivateTamper(RTC_HandleTypeDef *hrtc, uint32_t Tamper);
 HAL_StatusTypeDef HAL_RTCEx_PollForTamper1Event(RTC_HandleTypeDef *hrtc, uint32_t Timeout);
 HAL_StatusTypeDef HAL_RTCEx_PollForTamper2Event(RTC_HandleTypeDef *hrtc, uint32_t Timeout);
@@ -1684,8 +1668,8 @@ void              HAL_RTCEx_Tamper1EventCallback(RTC_HandleTypeDef *hrtc);
 void              HAL_RTCEx_Tamper2EventCallback(RTC_HandleTypeDef *hrtc);
 void              HAL_RTCEx_Tamper3EventCallback(RTC_HandleTypeDef *hrtc);
 #if defined(TAMP)
-HAL_StatusTypeDef HAL_RTCEx_SetInternalTamper(RTC_HandleTypeDef *hrtc, RTC_InternalTamperTypeDef *sIntTamper);
-HAL_StatusTypeDef HAL_RTCEx_SetInternalTamper_IT(RTC_HandleTypeDef *hrtc, RTC_InternalTamperTypeDef *sIntTamper);
+HAL_StatusTypeDef HAL_RTCEx_SetInternalTamper(RTC_HandleTypeDef *hrtc, const RTC_InternalTamperTypeDef *sIntTamper);
+HAL_StatusTypeDef HAL_RTCEx_SetInternalTamper_IT(RTC_HandleTypeDef *hrtc, const RTC_InternalTamperTypeDef *sIntTamper);
 HAL_StatusTypeDef HAL_RTCEx_DeactivateInternalTamper(RTC_HandleTypeDef *hrtc, uint32_t IntTamper);
 HAL_StatusTypeDef HAL_RTCEx_PollForInternalTamperEvent(RTC_HandleTypeDef *hrtc, uint32_t IntTamper, uint32_t Timeout);
 void              HAL_RTCEx_InternalTamper1EventCallback(RTC_HandleTypeDef *hrtc);
@@ -1695,8 +1679,8 @@ void              HAL_RTCEx_InternalTamper4EventCallback(RTC_HandleTypeDef *hrtc
 void              HAL_RTCEx_InternalTamper5EventCallback(RTC_HandleTypeDef *hrtc);
 void              HAL_RTCEx_InternalTamper6EventCallback(RTC_HandleTypeDef *hrtc);
 void              HAL_RTCEx_InternalTamper8EventCallback(RTC_HandleTypeDef *hrtc);
-HAL_StatusTypeDef HAL_RTCEx_SetActiveTampers(RTC_HandleTypeDef *hrtc, RTC_ActiveTampersTypeDef *sAllTamper);
-HAL_StatusTypeDef HAL_RTCEx_SetActiveSeed(RTC_HandleTypeDef *hrtc, uint32_t *pSeed);
+HAL_StatusTypeDef HAL_RTCEx_SetActiveTampers(RTC_HandleTypeDef *hrtc, const RTC_ActiveTampersTypeDef *sAllTamper);
+HAL_StatusTypeDef HAL_RTCEx_SetActiveSeed(RTC_HandleTypeDef *hrtc, const uint32_t *pSeed);
 HAL_StatusTypeDef HAL_RTCEx_DeactivateActiveTampers(RTC_HandleTypeDef *hrtc);
 #endif /* TAMP */
 
@@ -1716,7 +1700,7 @@ HAL_StatusTypeDef HAL_RTCEx_DeactivateActiveTampers(RTC_HandleTypeDef *hrtc);
 HAL_StatusTypeDef HAL_RTCEx_SetWakeUpTimer(RTC_HandleTypeDef *hrtc, uint32_t WakeUpCounter, uint32_t WakeUpClock);
 HAL_StatusTypeDef HAL_RTCEx_SetWakeUpTimer_IT(RTC_HandleTypeDef *hrtc, uint32_t WakeUpCounter, uint32_t WakeUpClock);
 HAL_StatusTypeDef HAL_RTCEx_DeactivateWakeUpTimer(RTC_HandleTypeDef *hrtc);
-uint32_t          HAL_RTCEx_GetWakeUpTimer(RTC_HandleTypeDef *hrtc);
+uint32_t          HAL_RTCEx_GetWakeUpTimer(const RTC_HandleTypeDef *hrtc);
 void              HAL_RTCEx_WakeUpTimerIRQHandler(RTC_HandleTypeDef *hrtc);
 void              HAL_RTCEx_WakeUpTimerEventCallback(RTC_HandleTypeDef *hrtc);
 HAL_StatusTypeDef HAL_RTCEx_PollForWakeUpTimerEvent(RTC_HandleTypeDef *hrtc, uint32_t Timeout);
@@ -1733,8 +1717,8 @@ HAL_StatusTypeDef HAL_RTCEx_PollForWakeUpTimerEvent(RTC_HandleTypeDef *hrtc, uin
 /** @defgroup RTCEx_Exported_Functions_Group6 Extended RTC Backup register functions
   * @{
   */
-void     HAL_RTCEx_BKUPWrite(RTC_HandleTypeDef *hrtc, uint32_t BackupRegister, uint32_t Data);
-uint32_t HAL_RTCEx_BKUPRead(RTC_HandleTypeDef *hrtc, uint32_t BackupRegister);
+void     HAL_RTCEx_BKUPWrite(const RTC_HandleTypeDef *hrtc, uint32_t BackupRegister, uint32_t Data);
+uint32_t HAL_RTCEx_BKUPRead(const RTC_HandleTypeDef *hrtc, uint32_t BackupRegister);
 /**
   * @}
   */
@@ -1758,7 +1742,7 @@ HAL_StatusTypeDef HAL_RTCEx_EnableBypassShadow(RTC_HandleTypeDef *hrtc);
 HAL_StatusTypeDef HAL_RTCEx_DisableBypassShadow(RTC_HandleTypeDef *hrtc);
 #if defined(TAMP)
 HAL_StatusTypeDef HAL_RTCEx_MonotonicCounterIncrement(RTC_HandleTypeDef *hrtc,  uint32_t Instance);
-HAL_StatusTypeDef HAL_RTCEx_MonotonicCounterGet(RTC_HandleTypeDef *hrtc, uint32_t *Counter,  uint32_t Instance);
+HAL_StatusTypeDef HAL_RTCEx_MonotonicCounterGet(const RTC_HandleTypeDef *hrtc, uint32_t *Counter,  uint32_t Instance);
 #endif /* TAMP */
 /**
   * @}

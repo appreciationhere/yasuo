@@ -1,1 +1,7 @@
 /build
+/Drivers/CMSIS/Core*
+/Drivers/CMSIS/docs
+/Drivers/CMSIS/DSP
+/Drivers/CMSIS/NN
+/Drivers/CMSIS/RTOS*
+/Drivers/CMSIS\Device/ST/STM32H7xx/Source/

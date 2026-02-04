@@ -1,0 +1,34 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Cortex Debug",
+            "cwd": "${workspaceFolder}",
+            "executable": "./build/bared.elf",
+            "request": "launch",
+            "type": "cortex-debug",
+            "servertype": "openocd",
+            // "serverpath": "C:/es_driver/stlink-1.8.0-win32/bin/st-util.exe",
+            // "interface": "swd",
+            "device": "STM32H7xx",
+            // "v1": false,
+            "runToEntryPoint": "main",
+            "gdbPath": "C:/es_driver/arm_gcc/xpack-arm-none-eabi-gcc-13.2.1-1.1-win32-x64/xpack-arm-none-eabi-gcc-13.2.1-1.1/bin/arm-none-eabi-gdb.exe",
+            "configFiles": [
+                "./tools/interface/stlink.cfg", // 选择下载器
+                "./tools/target/stm32h7x.cfg"  // 选择芯片
+            ],
+            //.svd可以在keil官网去下载STM32G0xx_DFP
+            "svdPath": "./tools/STM32H750x.svd", // svd文件
+            // "showDevDebugOutput": "both",
+            "liveWatch": {
+                "enabled": true,
+                "samplesPerSecond": 4
+            },
+            "searchDir": [],
+            "showDevDebugOutput": "none",
+            
+        }
+
+    ]
+}
