@@ -13,7 +13,7 @@ typedef void (*sys_async_work_func_t)(void *params);
 
 bool system_async_work_add(sys_async_work_func_t work, void *params);
 
-void system_handle(void);
+void system_handler(void);
 
 #endif // ! _H_SYSTEM_H__
 

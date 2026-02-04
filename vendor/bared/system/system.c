@@ -47,7 +47,7 @@ void system_async_handle(void)
     async_work_process(&sys_async_work.system_async_work);
 }
 
-void system_handle(void)
+void system_handler(void)
 {
     module_task_process();
     system_idle_process();
