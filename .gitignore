@@ -4,4 +4,4 @@
 /Drivers/CMSIS/DSP
 /Drivers/CMSIS/NN
 /Drivers/CMSIS/RTOS*
-/Drivers/CMSIS\Device/ST/STM32H7xx/Source/
+/Drivers/CMSIS/Device/ST/STM32H7xx/Source/

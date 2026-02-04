@@ -33,11 +33,23 @@
  ****************************************************************************/
 
 #include <stdbool.h>
-#include <sys/types.h>
+#include <stddef.h>
+#include <string.h>
 
 /****************************************************************************
  * Public Types
  ****************************************************************************/
+
+#define kmm_malloc(n)                    NULL
+#define kmm_free(n)
+#ifndef FAR
+#define FAR
+#endif   
+#define ssize_t                           uint32_t
+#ifndef ENOMEM
+#define ENOMEM                            -1
+#endif  
+
 
 /* This structure describes circular buffer */
 

@@ -13,8 +13,8 @@
 #ifndef	_TTY_H_
 #define	_TTY_H_
 
-#define TTY_RXBUF_SIZE		 256
-#define TTY_TXBUF_SIZE		 1024
+#define TTY_RXBUF_SIZE		 128
+#define TTY_TXBUF_SIZE		 256
 
 /*接口声明 --------------------------------------------------------------------*/
 typedef struct {

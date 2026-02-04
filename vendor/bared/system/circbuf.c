@@ -29,12 +29,8 @@
  * Included Files
  ****************************************************************************/
 
-#include <nuttx/config.h>
-
-#include <assert.h>
-
-#include <nuttx/kmalloc.h>
-#include <nuttx/mm/circbuf.h>
+#include "system.h"
+#include "circbuf.h"
 
 /****************************************************************************
  * Private Types
@@ -65,8 +61,8 @@
 
 int circbuf_init(FAR struct circbuf_s *circ, FAR void *base, size_t bytes)
 {
-  DEBUGASSERT(circ);
-  DEBUGASSERT(!base || bytes);
+  ASSERT(circ);
+  ASSERT(!base || bytes);
 
   circ->external = !!base;
 
@@ -107,8 +103,8 @@ int circbuf_resize(FAR struct circbuf_s *circ, size_t bytes)
   FAR void *tmp = NULL;
   size_t len = 0;
 
-  DEBUGASSERT(circ);
-  DEBUGASSERT(!circ->external);
+  ASSERT(circ);
+  ASSERT(!circ->external);
   if (bytes == circ->size)
     {
       return 0;
@@ -154,7 +150,7 @@ int circbuf_resize(FAR struct circbuf_s *circ, size_t bytes)
 
 void circbuf_reset(FAR struct circbuf_s *circ)
 {
-  DEBUGASSERT(circ);
+  ASSERT(circ);
   circ->head = circ->tail = 0;
 }
 
@@ -170,7 +166,7 @@ void circbuf_reset(FAR struct circbuf_s *circ)
 
 void circbuf_uninit(FAR struct circbuf_s *circ)
 {
-  DEBUGASSERT(circ);
+  ASSERT(circ);
 
   if (!circ->external)
     {
@@ -192,7 +188,7 @@ void circbuf_uninit(FAR struct circbuf_s *circ)
 
 size_t circbuf_size(FAR struct circbuf_s *circ)
 {
-  DEBUGASSERT(circ);
+  ASSERT(circ);
   return circ->size;
 }
 
@@ -208,7 +204,7 @@ size_t circbuf_size(FAR struct circbuf_s *circ)
 
 size_t circbuf_used(FAR struct circbuf_s *circ)
 {
-  DEBUGASSERT(circ);
+  ASSERT(circ);
   return circ->head - circ->tail;
 }
 
@@ -299,7 +295,7 @@ ssize_t circbuf_peekat(FAR struct circbuf_s *circ, size_t pos,
   size_t len;
   size_t off;
 
-  DEBUGASSERT(circ);
+  ASSERT(circ);
 
   if (!circ->size)
     {
@@ -380,8 +376,13 @@ ssize_t circbuf_peek(FAR struct circbuf_s *circ,
 ssize_t circbuf_read(FAR struct circbuf_s *circ,
                      FAR void *dst, size_t bytes)
 {
-  DEBUGASSERT(circ);
-  DEBUGASSERT(dst || !bytes);
+  ASSERT(circ);
+  ASSERT(dst || !bytes);
+
+  // if (circbuf_used(circ) < bytes)
+  //   {
+  //     return 0;
+  //   }
 
   bytes = circbuf_peek(circ, dst, bytes);
   circ->tail += bytes;
@@ -412,7 +413,7 @@ ssize_t circbuf_skip(FAR struct circbuf_s *circ, size_t bytes)
 {
   size_t len;
 
-  DEBUGASSERT(circ);
+  ASSERT(circ);
 
   len = circbuf_used(circ);
 
@@ -452,8 +453,8 @@ ssize_t circbuf_write(FAR struct circbuf_s *circ,
   size_t space;
   size_t off;
 
-  DEBUGASSERT(circ);
-  DEBUGASSERT(src || !bytes);
+  ASSERT(circ);
+  ASSERT(src || !bytes);
 
   if (!circ->size)
     {
@@ -510,8 +511,8 @@ ssize_t circbuf_overwrite(FAR struct circbuf_s *circ,
   size_t space;
   size_t off;
 
-  DEBUGASSERT(circ);
-  DEBUGASSERT(src || !bytes);
+  ASSERT(circ);
+  ASSERT(src || !bytes);
 
   if (!circ->size)
     {
@@ -566,7 +567,7 @@ FAR void *circbuf_get_writeptr(FAR struct circbuf_s *circ, FAR size_t *size)
 {
   size_t off;
 
-  DEBUGASSERT(circ);
+  ASSERT(circ);
 
   *size = circbuf_space(circ);
   off = circ->head % circ->size;
@@ -597,7 +598,7 @@ FAR void *circbuf_get_readptr(FAR struct circbuf_s *circ, size_t *size)
 {
   size_t off;
 
-  DEBUGASSERT(circ);
+  ASSERT(circ);
 
   *size = circbuf_used(circ);
   off = circ->tail % circ->size;
@@ -625,7 +626,7 @@ FAR void *circbuf_get_readptr(FAR struct circbuf_s *circ, size_t *size)
 
 void circbuf_writecommit(FAR struct circbuf_s *circ, size_t writtensize)
 {
-  DEBUGASSERT(circ);
+  ASSERT(circ);
   circ->head += writtensize;
 }
 
@@ -645,6 +646,6 @@ void circbuf_writecommit(FAR struct circbuf_s *circ, size_t writtensize)
 
 void circbuf_readcommit(FAR struct circbuf_s *circ, size_t readsize)
 {
-  DEBUGASSERT(circ);
+  ASSERT(circ);
   circ->tail += readsize;
 }

@@ -75,14 +75,6 @@ int main(void)
   /* MPU Configuration--------------------------------------------------------*/
   MPU_Config();
 
-  /* Enable the CPU Cache */
-
-  /* Enable I-Cache---------------------------------------------------------*/
-  SCB_EnableICache();
-
-  /* Enable D-Cache---------------------------------------------------------*/
-  SCB_EnableDCache();
-
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
@@ -117,7 +109,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    system_handle();
+    system_handler();
 		// HAL_Delay(1000);
 		// HAL_GPIO_WritePin(GPIOI, GPIO_PIN_8, 1);
 		// HAL_Delay(1000);

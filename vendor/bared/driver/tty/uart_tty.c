@@ -10,7 +10,7 @@
  *
  ******************************************************************************/
 #include "usart.h"
-#include "ringbuffer.h"
+#include "circbuf.h"
 #include "tty.h"
 #include <string.h>
 
@@ -25,7 +25,7 @@
 
 static unsigned char rxbuf[TTY_RXBUF_SIZE];         /*接收缓冲区 */
 static unsigned char txbuf[TTY_TXBUF_SIZE];         /*发送缓冲区 */
-static ring_buf_t rbsend, rbrecv;                   /*收发缓冲区管理*/
+static struct circbuf_s rbsend, rbrecv;             /*收发缓冲区管理*/
 
 /*
  * @brief	    串口初始化
@@ -34,8 +34,8 @@ static ring_buf_t rbsend, rbrecv;                   /*收发缓冲区管理*/
  */
 static void uart_init(int baudrate)
 {
-    ring_buf_init(&rbsend, txbuf, sizeof(txbuf));/*初始化环形缓冲区 */
-    ring_buf_init(&rbrecv, rxbuf, sizeof(rxbuf)); 
+    circbuf_init(&rbsend, txbuf, sizeof(txbuf));/*初始化环形缓冲区 */
+    circbuf_init(&rbrecv, rxbuf, sizeof(rxbuf)); 
 }
 
 /*
@@ -47,7 +47,7 @@ static void uart_init(int baudrate)
 static unsigned int uart_write(const void *buf, unsigned int len)
 {   
     unsigned int ret = 0;
-    // ret = ring_buf_put(&rbsend, (unsigned char *)buf, len);
+    // ret = circbuf_write(&rbsend, (unsigned char *)buf, len);
     usart_print_send((uint8_t*)buf, len);
     return ret; 
 }
@@ -62,24 +62,24 @@ static unsigned int uart_write(const void *buf, unsigned int len)
 static unsigned int uart_read(void *buf, unsigned int len)
 {
     unsigned int ret = 0;
-    ret = ring_buf_get(&rbrecv, (unsigned char *)buf, len);
+    ret = circbuf_read(&rbrecv, (unsigned char *)buf, len);
     return ret;
 }
 
 /*发送缓冲区满*/
 static bool tx_isfull(void)
 {
-    return ring_buf_len(&rbsend) == TTY_TXBUF_SIZE;
+    return circbuf_is_full(&rbsend);
 }
 
 /*接收缓冲区空*/
 bool rx_isempty(void)
 {
-    return ring_buf_len(&rbrecv) == 0;
+    return circbuf_is_empty(&rbsend);
 }
 void tty_push_data(unsigned char* data, unsigned int len)
 {
-    ring_buf_put(&rbrecv, data, len);
+    circbuf_write(&rbrecv, data, len);
 }
 
 /*控制台接口定义 -------------------------------------------------------------*/
