@@ -6,5 +6,6 @@
 #include "comdef.h"
 #include "deconfig.h"
 
+#define assert(n)          ASSERT(n)
 
 #endif // !_H_COMMON_H

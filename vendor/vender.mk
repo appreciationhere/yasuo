@@ -4,14 +4,17 @@ BARED_SYSTEM_DIR = vendor/bared/system
 BARED_DRIVER_DIR = vendor/bared/driver
 
 COMMON_DIR = vendor/common
+COMPONENT_DIR = vendor/component
 
 C_SOURCES += $(wildcard $(BARED_SERVICE_DIR)/nsh_service/*.c)
 C_SOURCES += $(wildcard $(BARED_SERVICE_DIR)/log_service/*.c)
 C_SOURCES += $(wildcard $(BARED_SYSTEM_DIR)/*.c)
 C_SOURCES += $(wildcard $(BARED_DRIVER_DIR)/**/*.c)
+C_SOURCES += $(wildcard $(COMPONENT_DIR)/**/*.c)
 
 
 C_INCLUDES  += -I$(COMMON_DIR)
+C_INCLUDES  += -I$(COMPONENT_DIR)/mm
 C_INCLUDES += -I$(BARED_SERVICE_DIR)/log_service
 C_INCLUDES += -I$(BARED_SERVICE_DIR)/nsh_service
 C_INCLUDES += -I$(BARED_SYSTEM_DIR)

@@ -16,5 +16,9 @@ bool system_async_work_add(sys_async_work_func_t work, void *params);
 
 void system_handler(void);
 
+int su_mm_init(void* start, void* end);
+void* su_malloc(uint32_t size);
+void su_free(void* note);
+
 #endif // ! _H_SYSTEM_H__
 

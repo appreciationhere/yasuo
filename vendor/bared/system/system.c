@@ -1,6 +1,7 @@
 #include "system.h"
 #include "async_work.h"
 #include "tty.h"
+#include "tlsf.h"
 
 struct sys_async_work_data_t
 {
@@ -10,6 +11,7 @@ struct sys_async_work_data_t
 
 static struct sys_async_work_data_t sys_async_work;
 static cli_obj_t cli;                               /*命令行对象 */
+static tlsf_t tlfs_sys;
 
 static void system_async_work_cb(async_work_t *w, void *object, void *params)
 {
@@ -47,6 +49,28 @@ void system_async_handle(void)
     async_work_process(&sys_async_work.system_async_work);
 }
 
+void system_mm_init(void)
+{
+    su_mm_init(&Image$$RW_RAM$$ZI$$Limit, );
+}
+
+int su_mm_init(void* start, void* end)
+{
+    int ret = 0;
+    tlfs_sys = tlsf_create_with_pool(start, (uint32_t)start - (uint32_t)end);
+    ASSERT(tlfs_sys);
+    return ret;
+}
+
+void* su_malloc(uint32_t size)
+{
+    return tlsf_malloc(&tlfs_sys, size);}
+
+void su_free(void* note)
+{
+    tlsf_free(&tlfs_sys, note);
+}
+
 void system_handler(void)
 {
     module_task_process();
@@ -61,5 +85,6 @@ void bsp_init(void)
 driver_init("bsp_init", bsp_init);
 
 system_init("init_async_work", system_async_work_init);
+system_init("init_mm", system_mm_init);
 
 task_register("async_work", system_async_handle, 1);
