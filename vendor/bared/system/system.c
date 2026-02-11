@@ -24,8 +24,10 @@ static void system_idle_process(void)
 {
     static uint32_t cnt_s = 0;
     static uint32_t last_ticl = 0;
+    uint32_t aaa = 0;
+    
     if (get_tick() - last_ticl > 1000) {
-        syslog(LOG_INFO, "now second: %lu", cnt_s);
+        syslog(LOG_INFO, "now second: %lu, addr aaa:%p", cnt_s, &aaa);
         ++cnt_s;
         last_ticl = get_tick();
     }
@@ -51,24 +53,27 @@ void system_async_handle(void)
 
 void system_mm_init(void)
 {
-    su_mm_init(&Image$$RW_RAM$$ZI$$Limit, );
+    su_mm_init((void*)HEAP_START, (void*)HEAP_END);
+    syslog(LOG_INFO, "system_mm_init 0x%lx - 0x%lx", HEAP_START, HEAP_END);
 }
 
 int su_mm_init(void* start, void* end)
 {
     int ret = 0;
-    tlfs_sys = tlsf_create_with_pool(start, (uint32_t)start - (uint32_t)end);
+    tlfs_sys = tlsf_create_with_pool(start, (uint32_t)end - (uint32_t)start);
+    syslog(LOG_INFO, "su_mm_init tlfs_sys:%p", tlfs_sys);
     ASSERT(tlfs_sys);
     return ret;
 }
 
 void* su_malloc(uint32_t size)
 {
-    return tlsf_malloc(&tlfs_sys, size);}
+    return tlsf_malloc(tlfs_sys, size);
+}
 
 void su_free(void* note)
 {
-    tlsf_free(&tlfs_sys, note);
+    tlsf_free(tlfs_sys, note);
 }
 
 void system_handler(void)

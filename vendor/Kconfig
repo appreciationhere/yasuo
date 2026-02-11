@@ -1,0 +1,17 @@
+menu "SYSTME"
+
+config SYSLOG_PRINT_EN
+    bool "syslog printf enable"
+    default n
+config SYSLOG_PRINT_BUFFER_SIZE
+    int "syslog printf  buffer size"
+    default 256
+    depends on SYSLOG_PRINT_EN
+config SYSLOG_PRINT_USART
+    bool "syslog printf use uart enable"
+    default n
+    depends on SYSLOG_PRINT_EN
+config ASYNC_WORK_NOTES_MAX
+    int "async work notes max size"
+    default 5
+endmenu

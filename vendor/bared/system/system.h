@@ -10,6 +10,8 @@
                      __func__, __LINE__);while(1);}};
 
 
+#define assert(n)       ASSERT(n)
+
 typedef void (*sys_async_work_func_t)(void *params);
 
 bool system_async_work_add(sys_async_work_func_t work, void *params);

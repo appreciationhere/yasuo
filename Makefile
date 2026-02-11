@@ -200,8 +200,9 @@ $(BUILD_DIR):
 # clean up
 #######################################
 clean:
-	-rm -fR $(BUILD_DIR)
-  
+	@echo "Cleaning..."
+	@cmd /c "if exist $(BUILD_DIR) rmdir /s /q $(BUILD_DIR)"
+	@echo "Clean done."
 #######################################
 # dependencies
 #######################################

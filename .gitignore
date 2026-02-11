@@ -5,3 +5,4 @@
 /Drivers/CMSIS/NN
 /Drivers/CMSIS/RTOS*
 /Drivers/CMSIS/Device/ST/STM32H7xx/Source/
+/tools/.*

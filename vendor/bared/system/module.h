@@ -17,6 +17,7 @@
 
 #include "comdef.h"
 #include <stdbool.h>
+#include <string.h>
 
 /*模块初始化项*/
 typedef struct {
@@ -31,6 +32,18 @@ typedef struct {
     unsigned int interval;          //轮询间隔
     unsigned int *timer;            //指向定时器指针
 }task_item_t;
+
+struct task_node_s {
+    task_item_t*   task;
+    unsigned int   runTime;
+    unsigned char  tid;
+};
+
+struct task_moudle_s {
+    struct task_node_s*  head;
+    unsigned char        tid;
+    unsigned int         startTime;
+};
 
 #define __module_initialize(name,func,level)           \
     USED ANONY_TYPE(const init_item_t, init_tbl_##func)\
@@ -57,10 +70,13 @@ typedef struct {
 #define driver_init(name,func)  __module_initialize(name,func,"2")
 #define module_init(name,func)  __module_initialize(name,func,"3")
 
+extern unsigned char  g_task_num_all;
+
 void systick_increase(unsigned int ms);
 unsigned int get_tick(void);
 bool is_timeout(unsigned int start, unsigned int timeout);
 void module_task_init(void);
 void module_task_process(void);
+task_item_t* module_get_task_item(void);
 
 #endif
