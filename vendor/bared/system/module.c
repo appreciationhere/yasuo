@@ -1,10 +1,12 @@
-#include "module.h"
-#include "syslog.h"
+#include "system.h"
 
 static void nop_process(void);
 
-task_item_t*            g_p_task_item;
-unsigned char           g_task_num_all;
+struct task_moudle_s    g_task_moudle;
+
+#define MALLOC(n)                 su_malloc(n)
+#define GET_TICK                  get_tick     
+#define INF(format, ...)          syslog(LOG_INFO, format, ##__VA_ARGS__)     
 
 //第一个初始化�?
 const init_item_t init_tbl_start SECTION("init.item.0") = {
@@ -66,12 +68,24 @@ bool is_timeout(unsigned int start, unsigned int timeout)
 void module_task_init(void)
 {
     const init_item_t *it = &init_tbl_start;
-    syslog(LOG_INFO, "module_task_init start ...");
+    const task_item_t *t;
+    unsigned char i = 0;
+    INF("module_task_init start ...");
     while (it < &init_tbl_end) {
-        syslog(LOG_INFO, "module_task_init name:%s", it->name);
+        INF("module_task_init name:%s", it->name);
         it++->init();
     }
-    syslog(LOG_INFO, "module_task_init end");
+    for (t = &task_tbl_start + 1; t < &task_tbl_end; ++t) {
+        ++g_task_moudle.tid_num;
+    }
+    g_task_moudle.head = su_malloc(g_task_moudle.tid_num * sizeof(struct task_node_s));
+    for (t = &task_tbl_start + 1, i = 0; t < &task_tbl_end; ++t, ++i) {
+        g_task_moudle.head[i].runTime = 0;
+        g_task_moudle.head[i].task = t;
+        g_task_moudle.head[i].tid = i;
+        g_task_moudle.head[i].status = TASK_STATUS_READY;
+    }
+    INF("module_task_init end");
 }
 
 /*
@@ -82,16 +96,32 @@ void module_task_init(void)
 void module_task_process(void)
 {
     const task_item_t *t;
-    for (t = &task_tbl_start + 1; t < &task_tbl_end; t++) {
-        g_p_task_item = t;
-        if  ((get_tick() - *t->timer) >= t->interval) {
-            *t->timer = get_tick();
+    unsigned char i = 0;
+    for (i = 0, t = &task_tbl_start + 1; t < &task_tbl_end; ++t, ++i) {
+        if  ((get_tick() - *t->timer) >= t->interval && 
+                TASK_STATUS_READY == g_task_moudle.head[i].status) {
+            g_task_moudle.startTime = get_tick();
+            g_task_moudle.tid = i;
+            g_task_moudle.head[i].status = TASK_STATUS_RUN;
             t->handle();
+            *t->timer = get_tick();
+            g_task_moudle.head[i].runTime += get_tick() - g_task_moudle.startTime;
+            g_task_moudle.head[i].status = TASK_STATUS_READY;
         }
     }
 }
 
-task_item_t* module_get_task_item(void)
+void module_task_status_change(unsigned char tid, unsigned char status) 
 {
-    return g_p_task_item;
+    g_task_moudle.head[tid].status = status;
+}
+
+struct task_node_s* module_get_task_node(unsigned char tid)
+{
+    return &g_task_moudle.head[tid];
+}
+
+unsigned char module_get_task_id(void)
+{
+    return g_task_moudle.tid;
 }

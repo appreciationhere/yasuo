@@ -23,7 +23,7 @@
 #include "usart.h"
 
 /* USER CODE BEGIN 0 */
-static char buffer[64];
+static uint8_t buffer[64];
 /* USER CODE END 0 */
 
 UART_HandleTypeDef huart4;

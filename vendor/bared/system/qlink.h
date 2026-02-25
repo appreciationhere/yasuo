@@ -18,6 +18,17 @@ extern "C" {
 #endif
 
 #include <stddef.h> 
+#include "comdef.h"
+
+#define qlink_for_each(pos, head) \
+    for (pos = (head)->next; pos != (head); pos = pos->next)
+
+#define qlink_for_each_safe(pos, n, head) \
+    for (pos = (head)->next, n = pos->next; pos != (head); \
+        pos = n, n = pos->next)
+
+#define qlink_entry(node, type, member) \
+    container_of(node, type, member)
 
 /*链式队列结点 ---------------------------------------------------------------*/
 struct qlink_node {

@@ -10,7 +10,7 @@ struct sys_async_work_data_t
 };
 
 static struct sys_async_work_data_t sys_async_work;
-static cli_obj_t cli;                               /*命令行对象 */
+// static cli_obj_t cli;                               /*命令行对象 */
 static tlsf_t tlfs_sys;
 
 static void system_async_work_cb(async_work_t *w, void *object, void *params)
@@ -79,7 +79,6 @@ void su_free(void* note)
 void system_handler(void)
 {
     module_task_process();
-    system_idle_process();
 }
 
 void bsp_init(void)
@@ -92,4 +91,5 @@ driver_init("bsp_init", bsp_init);
 system_init("init_async_work", system_async_work_init);
 system_init("init_mm", system_mm_init);
 
-task_register("async_work", system_async_handle, 1);
+task_register("async_work", system_async_handle, 0);
+task_register("idle_task", system_idle_process, 0);

@@ -16,14 +16,15 @@
 #define _MODULE_H_
 
 #include "comdef.h"
-#include <stdbool.h>
 #include <string.h>
+#include "common.h"
 
 /*模块初始化项*/
 typedef struct {
     const char *name;               //模块名称
     void (*init)(void);             //初始化接口
-}init_item_t;
+} init_item_t;
+
 
 /*任务处理项*/
 typedef struct {
@@ -31,18 +32,19 @@ typedef struct {
     void (*handle)(void);           //初始化接口
     unsigned int interval;          //轮询间隔
     unsigned int *timer;            //指向定时器指针
-}task_item_t;
+} task_item_t;
 
 struct task_node_s {
-    task_item_t*   task;
+    const task_item_t*   task;
     unsigned int   runTime;
     unsigned char  tid;
 };
 
 struct task_moudle_s {
     struct task_node_s*  head;
-    unsigned char        tid;
     unsigned int         startTime;
+    unsigned char        tid;
+    unsigned char        tid_num;
 };
 
 #define __module_initialize(name,func,level)           \
@@ -77,6 +79,8 @@ unsigned int get_tick(void);
 bool is_timeout(unsigned int start, unsigned int timeout);
 void module_task_init(void);
 void module_task_process(void);
-task_item_t* module_get_task_item(void);
+struct task_node_s* module_get_task_node(unsigned char tid);
+unsigned char module_get_task_id(void);
+void module_task_status_change(unsigned char tid, unsigned char status);
 
 #endif
