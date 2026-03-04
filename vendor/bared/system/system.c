@@ -20,6 +20,11 @@ static void system_async_work_cb(async_work_t *w, void *object, void *params)
         cb(params);
     }
 }
+
+void printf_onece(void* argc) {
+    syslog(LOG_INFO, "6661");
+}
+
 static void system_idle_process(void)
 {
     static uint32_t cnt_s = 0;
@@ -30,6 +35,10 @@ static void system_idle_process(void)
         syslog(LOG_INFO, "now second: %lu, addr aaa:%p", cnt_s, &aaa);
         ++cnt_s;
         last_ticl = get_tick();
+        if (cnt_s % 10 == 0) {
+            void* timer1 =  timer_creat();
+            timer_start(timer1, printf_onece, 200, 1000);
+        }
     }
 }
 
@@ -50,6 +59,12 @@ void system_async_handle(void)
 {
     async_work_process(&sys_async_work.system_async_work);
 }
+
+void system_timer_handle(void)
+{
+    timer_proc();
+}
+
 
 void system_mm_init(void)
 {
@@ -86,10 +101,22 @@ void bsp_init(void)
     tty.init(0);
 }
 
+void sys_msleep(uint32_t ms)
+{
+    uint8_t tid = module_get_task_id();
+    uint32_t tick = get_tick();
+    module_task_status_change(tid, TASK_STATUS_DELAY);
+    while (get_tick() - tick < ms) {
+        system_handler();
+    }
+    module_task_status_change(tid, TASK_STATUS_RUN);
+}
+
 driver_init("bsp_init", bsp_init);
 
 system_init("init_async_work", system_async_work_init);
 system_init("init_mm", system_mm_init);
 
+task_register("timer_task", system_timer_handle, 1);
 task_register("async_work", system_async_handle, 0);
 task_register("idle_task", system_idle_process, 0);

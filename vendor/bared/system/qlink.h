@@ -95,6 +95,56 @@ static inline struct qlink_node *qlink_get(struct qlink *q)
 }
 
 /*******************************************************************************
+ * @brief       指定插入 n 到 pre 后面
+ * @param[in]   q     - 队列管理器
+ * @return      nond
+ ******************************************************************************/
+static inline void qlink_insert(struct qlink *q, \
+            struct qlink_node *pre, struct qlink_node *n)
+{
+    if (NULL == pre) {
+        q->front = n;
+        q->rear = n;
+        n->next = NULL;
+    } else {
+        n->next = pre->next;
+        pre->next = n;
+    }
+    if (pre == q->rear) {
+        q->rear = n;
+        n->next = NULL;
+    }
+    ++q->count;
+}
+
+/*******************************************************************************
+ * @brief       指定删除 n
+ * @param[in]   q     - 队列管理器
+ * @return      nond
+ ******************************************************************************/
+static inline void qlink_remove(struct qlink *q, struct qlink_node *n)
+{
+    struct qlink_node *pos = q->front;
+    struct qlink_node *prev = pos;
+    if (n == pos) {
+        n->next = NULL;
+        q->front = NULL;
+        q->rear = NULL;
+        return;
+    }
+    while (NULL != pos) {
+        if (n == pos) {
+            break;
+        }
+        prev = pos;
+        pos = pos->next;
+    }
+    if (NULL != prev && NULL != pos) {
+        prev->next = pos->next;
+        n->next = NULL;
+    }
+}
+/*******************************************************************************
  * @brief       队列元素个数
  * @param[in]   q     - 队列管理器
  * @return      nond

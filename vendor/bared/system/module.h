@@ -25,6 +25,11 @@ typedef struct {
     void (*init)(void);             //初始化接口
 } init_item_t;
 
+typedef enum {
+    TASK_STATUS_READY,
+    TASK_STATUS_RUN,
+    TASK_STATUS_DELAY
+} task_status_e;
 
 /*任务处理项*/
 typedef struct {
@@ -37,6 +42,7 @@ typedef struct {
 struct task_node_s {
     const task_item_t*   task;
     unsigned int   runTime;
+    unsigned char  status;
     unsigned char  tid;
 };
 

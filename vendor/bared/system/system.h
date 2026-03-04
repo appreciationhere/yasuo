@@ -20,10 +20,11 @@ typedef void (*timer_func_t)(void *params);
 typedef struct
 {
     uint32_t            loop_time;
-    uint32_t            next_time;
-    timer_func_t        cb;
+    uint32_t            timeout_tick;
+    timer_func_t        timeout_func;
     unsigned char       tid;
     bool                activing;
+    struct qlink_node   r_node;
     struct qlink_node   node;
 } timer_item_t;
 
@@ -38,7 +39,7 @@ void su_free(void* note);
 
 void timer_proc(void);
 void* timer_creat(void);
-int timer_start(void* timer, uint32_t first, uint32_t time);
+int timer_start(void* timer, timer_func_t cb, uint32_t first, uint32_t time);
 int timer_again(void* timer);
 int timer_stop(void* timer);
 int timer_destroy(void* timer);
