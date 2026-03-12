@@ -27,9 +27,9 @@ void timer_proc(void)
         }
         item->timeout_func(item);
         pos = qlink_get(&s_timer.q_ready);
-        pos = qlink_peek(&s_timer.q_ready);
         if (item->loop_time > 0)
             timer_start(item, item->timeout_func, item->loop_time, item->loop_time);
+        pos = qlink_peek(&s_timer.q_ready);
     }
 }
 
@@ -51,14 +51,14 @@ int timer_start(void* timer, timer_func_t cb, uint32_t first, uint32_t time)
     item->activing = true;
     item->timeout_tick = GET_TICK() + first;
     struct qlink_node* pos = qlink_peek(&s_timer.q_ready);
-    struct qlink_node* prev_pos = pos;
+    struct qlink_node* prev_pos = NULL;
     while (NULL != pos) {
         timer_item_t* head = container_of(pos, timer_item_t, r_node);
         if (head->timeout_tick > item->timeout_tick) {
             break;
         }
         prev_pos = pos;
-        pos = head->node.next;
+        pos = pos->next;
     }
     qlink_insert(&s_timer.q_ready, prev_pos, &item->r_node);
     return ret;
@@ -66,9 +66,11 @@ int timer_start(void* timer, timer_func_t cb, uint32_t first, uint32_t time)
 
 int timer_again(void* timer)
 {
+    int ret = 0;
     timer_item_t* item = (timer_item_t*)timer;
     timer_stop(item);
     timer_start(item, item->timeout_func, item->loop_time, item->loop_time);
+    return ret;
 }
 
 int timer_stop(void* timer)

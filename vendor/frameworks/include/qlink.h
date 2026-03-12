@@ -103,9 +103,13 @@ static inline void qlink_insert(struct qlink *q, \
             struct qlink_node *pre, struct qlink_node *n)
 {
     if (NULL == pre) {
+        if (NULL == q->front) {
+            q->rear = n;
+            n->next = NULL;
+        } else {
+            n->next = q->front;
+        }
         q->front = n;
-        q->rear = n;
-        n->next = NULL;
     } else {
         n->next = pre->next;
         pre->next = n;

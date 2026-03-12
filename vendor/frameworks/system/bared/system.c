@@ -22,7 +22,8 @@ static void system_async_work_cb(async_work_t *w, void *object, void *params)
 }
 
 void printf_onece(void* argc) {
-    syslog(LOG_INFO, "6661");
+    timer_item_t* item = (timer_item_t*)argc;
+    syslog(LOG_INFO, "6661 0x%x", &item->r_node);
 }
 
 static void system_idle_process(void)
