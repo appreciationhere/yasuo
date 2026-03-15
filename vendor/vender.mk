@@ -1,12 +1,21 @@
 # Build path
 -include tools/.config
 
-BARED_SERVICE_DIR = vendor/bared/service
-BARED_SYSTEM_DIR = vendor/bared/system
-BARED_DRIVER_DIR = vendor/bared/driver
+# BARED_SERVICE_DIR = vendor/bared/service
+# BARED_SYSTEM_DIR = vendor/bared/system
+# BARED_DRIVER_DIR = vendor/bared/driver
 
-COMMON_DIR = vendor/common
-COMPONENT_DIR = vendor/component
+# COMMON_DIR = vendor/common
+# COMPONENT_DIR = vendor/component
+
+BOARD_DIR 		= vendor/frameworks/board
+SYSTEM_DIR 		= vendor/frameworks/system
+DRIVERS_DIR 	= vendor/drivers
+COMPONENT_DIR 	= vendor/component
+COMMON_DIR 		= vendor/common
+SERVICE_DIR 	= vendor/service
+
+include $(BOARD_DIR)/
 
 C_SOURCES += $(wildcard $(BARED_SERVICE_DIR)/nsh_service/*.c)
 C_SOURCES += $(wildcard $(BARED_SERVICE_DIR)/log_service/*.c)

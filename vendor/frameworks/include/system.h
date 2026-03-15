@@ -11,6 +11,9 @@
                      __func__, __LINE__);while(1);}};
 
 
+#define MALLOC(n)       su_malloc(n)    
+#define FREE(n)         su_free(n)
+
 #define assert(n)       ASSERT(n)
 
 typedef void (*sys_async_work_func_t)(void *params);
@@ -36,6 +39,8 @@ void system_handler(void);
 int su_mm_init(void* start, void* end);
 void* su_malloc(uint32_t size);
 void su_free(void* note);
+
+void sys_msleep(uint32_t ms);
 
 void timer_proc(void);
 void* timer_creat(void);

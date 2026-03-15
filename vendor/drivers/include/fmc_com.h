@@ -5,7 +5,7 @@
 
 struct fmc_dev_s
 {
-    const struct fmc_ops_s *ops; /* FMC vtable */
+    const struct fmc_ops_s* ops; /* FMC vtable */
 };
 
 struct fmc_msg_s
@@ -24,7 +24,7 @@ struct fmc_ops_s
 {
     int (*transfer)(struct fmc_dev_s *dev,
                         struct fmc_msg_s *msgs, int count);
-    int (*refresh)(struct i2c_master_s *dev, uint32_t RefreshRate);
+    int (*refresh)(struct fmc_dev_s *dev, uint32_t RefreshRate);
 };
 
 #endif // !_FMC_H__
