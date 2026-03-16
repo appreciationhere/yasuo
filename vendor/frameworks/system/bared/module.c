@@ -4,7 +4,6 @@ static void nop_process(void);
 
 struct task_moudle_s    g_task_moudle;
 
-#define MALLOC(n)                 su_malloc(n)
 #define GET_TICK                  get_tick     
 #define INF(format, ...)          syslog(LOG_INFO, format, ##__VA_ARGS__)     
 
@@ -70,6 +69,10 @@ void module_task_init(void)
     const init_item_t *it = &init_tbl_start;
     const task_item_t *t;
     unsigned char i = 0;
+
+    extern int board_init_pre(void);
+    board_init_pre();
+    
     INF("module_task_init start ...");
     while (it < &init_tbl_end) {
         INF("module_task_init name:%s", it->name);
@@ -86,6 +89,9 @@ void module_task_init(void)
         g_task_moudle.head[i].status = TASK_STATUS_READY;
     }
     INF("module_task_init end");
+
+    extern int board_init_final(void);
+    board_init_final();
 }
 
 /*

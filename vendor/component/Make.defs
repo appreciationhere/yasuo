@@ -1,0 +1,2 @@
+COMPONENT_DIR 	?= vendor/component
+include $(COMPONENT_DIR)/Makefile

@@ -1,4 +1,7 @@
 #include "fmc.h"
+#include <drv_com.h>
+#include <fmc_com.h>
+#include <hal/board.h>
 
 #define SDRAM_TIMEOUT                    ((uint32_t)0xFFFF)
 #define REFRESH_COUNT                    ((uint32_t)1543)    /* SDRAM自刷新计数 */  
@@ -17,7 +20,7 @@
 
 static int SDRAM_SendCommand(uint32_t CommandMode, uint32_t Bank, uint32_t RefreshNum, uint32_t RegVal)
 {
-    uint32_t CommandTarget;
+    uint32_t CommandTarget = 0;
     FMC_SDRAM_CommandTypeDef Command;
     
     if (Bank == 1) {
@@ -40,9 +43,10 @@ static int SDRAM_SendCommand(uint32_t CommandMode, uint32_t Bank, uint32_t Refre
 
 void bsp_InitExtSDRAM(void)
 {
+	uint32_t temp;
 /* 1. 时钟使能命令 */
     SDRAM_SendCommand(FMC_SDRAM_CMD_CLK_ENABLE, 1, 1, 0);
-    
+
     /* 2. 延时，至少100us */
     HAL_Delay(1);
     
@@ -69,6 +73,8 @@ void bsp_InitExtSDRAM(void)
     HAL_SDRAM_ProgramRefreshRate(&hsdram1, 2480);
 }
 
+
+#if W9825G_SDRAM_TEST
 /*
 *********************************************************************************************************
 *	函 数 名: WriteSpeedTest
@@ -77,9 +83,8 @@ void bsp_InitExtSDRAM(void)
 *	返 回 值: 无
 *********************************************************************************************************
 */
-static void WriteSpeedTest(void)
+void WriteSpeedTest(void)
 {
-	uint32_t start, end, cnt;
 	uint32_t i, j;
 	int32_t iTime1, iTime2;
 	uint32_t *pBuf;
@@ -87,9 +92,8 @@ static void WriteSpeedTest(void)
 
 	/* 设置初始化值并记下开始时间 */
 	j = 0;
-	pBuf = (uint32_t *)EXT_SDRAM_ADDR;
-	iTime1 = bsp_GetRunTime();	  
-	start = DWT_CYCCNT;
+	pBuf = (uint32_t *)SDRAM_ADDR_SART;
+	iTime1 = GET_TICK_MS();
 	
 	/* 以递增的方式写数据到SDRAM所有空间 */
 	for (i = 1024*1024/4; i >0 ; i--)
@@ -130,84 +134,80 @@ static void WriteSpeedTest(void)
 		*pBuf++ = j++;
 		*pBuf++ = j++;	
 	}
-	end = DWT_CYCCNT;
-	cnt = end - start;
-	iTime2 = bsp_GetRunTime();	/* 记下结束时间 */
+	iTime2 = GET_TICK_MS();	/* 记下结束时间 */
 	
     /* 读取写入的是否出错 */
 	j = 0;
-	pBuf = (uint32_t *)EXT_SDRAM_ADDR;
+	pBuf = (uint32_t *)SDRAM_ADDR_SART;
 	for (i = 0; i < 1024*1024*8; i++)
 	{
 		if(*pBuf++ != j++)
 		{
-			printf("写入出错 j=%d\r\n", j);
+			DRV_LOG_INF("写入出错 j=%d\r\n", j);
 			break;
 		}
 	}
 		
 	/* 打印速度 */
-	printf("【32MB数据写耗时】: 方式一:%dms  方式二:%dms, 写速度: %dMB/s\r\n", 
-	                  iTime2 - iTime1,  cnt/400000, (EXT_SDRAM_SIZE / 1024 /1024 * 1000) / (iTime2 - iTime1));
+	DRV_LOG_INF("【32MB数据写耗时】: 方式一:%dms, 写速度: %dMB/s\r\n", 
+	                  iTime2 - iTime1, (SDRAM_ADDR_LEN / 1024 /1024 * 1000) / (iTime2 - iTime1));
 }
-
-static void ReadSpeedTest(void)
-{	
-	uint32_t start, end, cnt;
+void ReadSpeedTest(void)
+{
 	uint32_t i;
 	int32_t iTime1, iTime2;
 	uint32_t *pBuf;
-	__IO  uint32_t ulTemp; /* 设置为__IO类型，防止被MDK优化 */
+	__IO  uint32_t ulTemp = 0; /* 设置为__IO类型，防止被MDK优化 */
 
 	/* 设置初始化值并记下开始时间 */
-	pBuf = (uint32_t *)EXT_SDRAM_ADDR;
-	iTime1 = bsp_GetRunTime();	
-	start = DWT_CYCCNT;
-	
+	pBuf = (uint32_t *)SDRAM_ADDR_SART;
+	iTime1 = GET_TICK_MS();	
+	DRV_LOG_INF("test buf1 : %lu", pBuf[1]);
+	// pBuf[1] = 100;
+	// DRV_LOG_INF("test buf2 : %lu", pBuf[1]);
 	/* 读取SDRAM所有空间数据 */	
-	for (i = 1024*1024/4; i >0 ; i--)
-	{
-		ulTemp = *pBuf++;
-		ulTemp = *pBuf++;
-		ulTemp = *pBuf++;
-		ulTemp = *pBuf++;
-		ulTemp = *pBuf++;
-		ulTemp = *pBuf++;
-		ulTemp = *pBuf++;
-		ulTemp = *pBuf++;
+	// for (i = 1024*1024/4; i >0 ; i--)
+	// {
+	// 	ulTemp = *pBuf++;
+	// 	ulTemp = *pBuf++;
+	// 	ulTemp = *pBuf++;
+	// 	ulTemp = *pBuf++;
+	// 	ulTemp = *pBuf++;
+	// 	ulTemp = *pBuf++;
+	// 	ulTemp = *pBuf++;
+	// 	ulTemp = *pBuf++;
 
-		ulTemp = *pBuf++;
-		ulTemp = *pBuf++;
-		ulTemp = *pBuf++;
-		ulTemp = *pBuf++;
-		ulTemp = *pBuf++;
-		ulTemp = *pBuf++;
-		ulTemp = *pBuf++;
-		ulTemp = *pBuf++;
+	// 	ulTemp = *pBuf++;
+	// 	ulTemp = *pBuf++;
+	// 	ulTemp = *pBuf++;
+	// 	ulTemp = *pBuf++;
+	// 	ulTemp = *pBuf++;
+	// 	ulTemp = *pBuf++;
+	// 	ulTemp = *pBuf++;
+	// 	ulTemp = *pBuf++;
 		
-		ulTemp = *pBuf++;
-		ulTemp = *pBuf++;
-		ulTemp = *pBuf++;
-		ulTemp = *pBuf++;
-		ulTemp = *pBuf++;
-		ulTemp = *pBuf++;
-		ulTemp = *pBuf++;
-		ulTemp = *pBuf++;
+	// 	ulTemp = *pBuf++;
+	// 	ulTemp = *pBuf++;
+	// 	ulTemp = *pBuf++;
+	// 	ulTemp = *pBuf++;
+	// 	ulTemp = *pBuf++;
+	// 	ulTemp = *pBuf++;
+	// 	ulTemp = *pBuf++;
+	// 	ulTemp = *pBuf++;
 		
-		ulTemp = *pBuf++;
-		ulTemp = *pBuf++;
-		ulTemp = *pBuf++;
-		ulTemp = *pBuf++;
-		ulTemp = *pBuf++;
-		ulTemp = *pBuf++;
-		ulTemp = *pBuf++;
-		ulTemp = *pBuf++;
-	}
-	end = DWT_CYCCNT;
-	cnt = end - start;
-	iTime2 = bsp_GetRunTime();	/* 记下结束时间 */
+	// 	ulTemp = *pBuf++;
+	// 	ulTemp = *pBuf++;
+	// 	ulTemp = *pBuf++;
+	// 	ulTemp = *pBuf++;
+	// 	ulTemp = *pBuf++;
+	// 	ulTemp = *pBuf++;
+	// 	ulTemp = *pBuf++;
+	// 	ulTemp = *pBuf++;
+	// }
+	iTime2 = GET_TICK_MS();	/* 记下结束时间 */
 
 	/* 打印速度 */
-	printf("【32MB数据读耗时】: 方式一:%dms  方式二:%dms, 读速度: %dMB/s\r\n", 
-	        iTime2 - iTime1,  cnt/400000, (EXT_SDRAM_SIZE / 1024 /1024 * 1000) / (iTime2 - iTime1));
+	DRV_LOG_INF("【32MB数据读耗时】: 方式一:%dms, 读速度: %dMB/s\r\n", 
+	        iTime2 - iTime1,  (SDRAM_ADDR_LEN / 1024 /1024 * 1000) / (iTime2 - iTime1));
 }
+#endif

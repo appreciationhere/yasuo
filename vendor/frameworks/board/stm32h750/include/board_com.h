@@ -2,10 +2,10 @@
  *    This header file for board dir file call, board dir rely on function
  */
 
-#ifndef __BOARD_H_
-#define __BOARD_H_
+#ifndef __BOARD_COM_H_
+#define __BOARD_COM_H_
 
-#include "common.h"
+#include <common.h>
 #include "system.h"
 #ifdef CONFIG_STM32_HAL
 #include "stm32h7xx_hal.h"
@@ -21,4 +21,4 @@
 #error "need choose platform for delay function"
 #endif // CONFIG_STM32_HAL
 
-#endif // !__BOARD_H_
+#endif // !__BOARD_COM_H_

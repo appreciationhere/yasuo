@@ -1,0 +1,2 @@
+SERVICE_DIR 	?= vendor/service
+include $(SERVICE_DIR)/Makefile

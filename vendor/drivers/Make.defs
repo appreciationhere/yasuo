@@ -1,0 +1,2 @@
+DRIVERS_DIR 	?= vendor/drivers
+include $(DRIVERS_DIR)/Makefile

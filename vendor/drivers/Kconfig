@@ -1,17 +1,10 @@
 menu "DRIVERS"
 
-config SYSLOG_PRINT_EN
-    bool "syslog printf enable"
+config SDRAM_W9825G6KH
+    bool "board sdram w9825g6kh"
     default n
-config SYSLOG_PRINT_BUFFER_SIZE
-    int "syslog printf  buffer size"
-    default 256
-    depends on SYSLOG_PRINT_EN
-config SYSLOG_PRINT_USART
-    bool "syslog printf use uart enable"
+config UART_TTY
+    bool "board use uart tty"
     default n
-    depends on SYSLOG_PRINT_EN
-config ASYNC_WORK_NOTES_MAX
-    int "async work notes max size"
-    default 5
+
 endmenu

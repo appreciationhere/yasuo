@@ -1,8 +1,6 @@
 #include "system.h"
 #include "qlink.h"
 
-#define MALLOC(s)               su_malloc(s)
-#define FREE(s)                 su_free(s)
 #define GET_TICK                get_tick     
 #define GET_TID                 module_get_task_id
 #define PRINT_DEBUG(fmt,...)    syslog(LOG_INFO, ##__VA_ARGS__)

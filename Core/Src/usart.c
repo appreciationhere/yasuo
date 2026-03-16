@@ -193,7 +193,7 @@ void Usart_Receive_Data(UART_HandleTypeDef *huart)
     {
         HAL_UART_DMAStop(&huart4);
         __HAL_UART_CLEAR_IDLEFLAG(huart);
-        syslog(LOG_DEBUG, "usart_get_receive_len:%lu", usart4_get_receive_len());
+        // syslog(LOG_DEBUG, "usart_get_receive_len:%lu", usart4_get_receive_len());
         tty_push_data(buffer, usart4_get_receive_len());
         HAL_UART_Receive_DMA(&huart4, buffer, sizeof(buffer));
     }

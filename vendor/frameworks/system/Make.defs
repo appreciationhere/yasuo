@@ -1,0 +1,2 @@
+SYSTEM_DIR 		?= vendor/frameworks/system
+include $(SYSTEM_DIR)/Makefile

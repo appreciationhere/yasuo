@@ -13,6 +13,7 @@
 
 #define MALLOC(n)       su_malloc(n)    
 #define FREE(n)         su_free(n)
+#define GET_TICK_MS     get_tick
 
 #define assert(n)       ASSERT(n)
 

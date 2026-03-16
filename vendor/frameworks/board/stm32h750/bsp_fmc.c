@@ -1,5 +1,5 @@
 #include "fmc_com.h"
-#include "board.h"
+#include <board_com.h>
 #include "fmc.h"
 
 /* fmc ops */
@@ -39,7 +39,7 @@ static int SDRAM_SendCommand(uint32_t CommandMode, uint32_t Bank, uint32_t Refre
     return 0;
 }
 
-HAL_SDRAM_ProgramRefreshRate(&hsdram1, 2480);
+// HAL_SDRAM_ProgramRefreshRate(&hsdram1, 2480);
 
 
 static int fmc_transfer(struct fmc_dev_s *dev,

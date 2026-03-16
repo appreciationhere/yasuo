@@ -1,0 +1,2 @@
+APPS_DIR 	?= vendor/apps
+include $(APPS_DIR)/Makefile

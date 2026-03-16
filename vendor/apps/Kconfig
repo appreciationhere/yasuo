@@ -1,0 +1,7 @@
+menu "APPS"
+
+config CMD_SDRAM_TEST
+    bool "cmd shell to sdram test"
+    default n
+
+endmenu

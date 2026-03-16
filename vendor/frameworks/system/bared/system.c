@@ -99,6 +99,8 @@ void system_handler(void)
 
 void bsp_init(void)
 {
+    extern int board_init_later(void);
+    board_init_later();
     tty.init(0);
 }
 

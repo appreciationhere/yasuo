@@ -1,17 +1,23 @@
 menu "FRAMEWORKS BOARD"
 
 
-
 choice
     prompt "Select Board Platform"
     default STM32H750
 config STM32H750
     bool "Board STM32H750"
-    
 config STM32F4XX
     bool "Board STM32F4XX"
 endchoice
 
+if STM32H750 || STM32F4XX
+    config STM32_HAL
+        bool "use stm32 hal lib"
+        default n
+endif
 
-
+if STM32H750
+config STM32H750_ART_PI
+    bool "Board STM32H750_ART_PI"
+endif
 endmenu

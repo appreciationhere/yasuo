@@ -1,4 +1,4 @@
-
+rsource  "apps/Kconfig"
 rsource  "component/Kconfig"
 rsource  "drivers/Kconfig"
 rsource  "service/Kconfig"
