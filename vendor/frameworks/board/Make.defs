@@ -1,0 +1,2 @@
+BOARD_DIR 		?= vendor/frameworks/board
+include $(BOARD_DIR)/Makefile

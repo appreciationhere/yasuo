@@ -1,0 +1,17 @@
+menu "FRAMEWORKS BOARD"
+
+
+
+choice
+    prompt "Select Board Platform"
+    default STM32H750
+config STM32H750
+    bool "Board STM32H750"
+    
+config STM32F4XX
+    bool "Board STM32F4XX"
+endchoice
+
+
+
+endmenu

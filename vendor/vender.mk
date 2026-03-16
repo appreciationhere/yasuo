@@ -1,21 +1,18 @@
 # Build path
 -include tools/.config
 
-# BARED_SERVICE_DIR = vendor/bared/service
-# BARED_SYSTEM_DIR = vendor/bared/system
-# BARED_DRIVER_DIR = vendor/bared/driver
-
-# COMMON_DIR = vendor/common
-# COMPONENT_DIR = vendor/component
-
 BOARD_DIR 		= vendor/frameworks/board
 SYSTEM_DIR 		= vendor/frameworks/system
 DRIVERS_DIR 	= vendor/drivers
 COMPONENT_DIR 	= vendor/component
-COMMON_DIR 		= vendor/common
 SERVICE_DIR 	= vendor/service
 
-include $(BOARD_DIR)/
+include $(wildcard $(BOARD_DIR)/Make.defs)
+include $(wildcard $(SYSTEM_DIR)/Make.defs)
+include $(wildcard $(DRIVERS_DIR)/Make.defs)
+include $(wildcard $(COMPONENT_DIR)/Make.defs)
+include $(wildcard $(SERVICE_DIR)/Make.defs)
+
 
 C_SOURCES += $(wildcard $(BARED_SERVICE_DIR)/nsh_service/*.c)
 C_SOURCES += $(wildcard $(BARED_SERVICE_DIR)/log_service/*.c)
@@ -26,7 +23,6 @@ C_SOURCES += $(wildcard $(BARED_DRIVER_DIR)/**/*.c)
 C_SOURCES += $(wildcard $(COMPONENT_DIR)/**/*.c)
 
 
-C_INCLUDES  += -I$(COMMON_DIR)
 C_INCLUDES  += -I$(COMPONENT_DIR)/mm
 C_INCLUDES += -I$(BARED_SERVICE_DIR)/log_service
 C_INCLUDES += -I$(BARED_SERVICE_DIR)/nsh_service
@@ -38,6 +34,6 @@ menuconfig:
 	@echo "Running Python-based menuconfig..."
 	@cd tools && python -m menuconfig Kconfig
 	@cd tools && python kconfig.py
-	@copy .\tools\config.h .\vendor\common\config.h
+	@copy .\tools\config.h .\vendor\frameworks\include\common\config.h
 
 .DEFAULT_GOAL := all
