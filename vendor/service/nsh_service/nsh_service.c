@@ -1,6 +1,6 @@
 #include "cli.h"
 #include "system.h"
-#include "tty.h"
+#include <tty/tty.h>
 #include "nsh_service.h"
 #include "cli.h"
 

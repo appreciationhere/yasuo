@@ -1,6 +1,6 @@
 #include "system.h"
 #include "async_work.h"
-#include "tty.h"
+#include <tty/tty.h>
 #include "tlsf.h"
 
 struct sys_async_work_data_t

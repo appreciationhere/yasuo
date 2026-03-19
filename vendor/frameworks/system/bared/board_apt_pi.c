@@ -1,5 +1,5 @@
 #include <hal/board.h>
-#include <fmc_com.h>
+#include <sdram/sdram.h>
 #include "syslog.h"
 #ifdef CONFIG_STM32H750_ART_PI
 

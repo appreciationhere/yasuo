@@ -7,5 +7,6 @@
 #include "comdef.h"
 #include "config.h"
 #include "mm_map.h"
+#include "comid.h"
 
 #endif // !_H_COMMON_H

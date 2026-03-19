@@ -1,4 +1,4 @@
-#include "fmc_com.h"
+#include <fmc/fmc_com.h>
 #include <board_com.h>
 #include "fmc.h"
 
@@ -18,7 +18,7 @@ static struct fmc_dev_s bsp_fmc0_priv = {
 
 static int SDRAM_SendCommand(uint32_t CommandMode, uint32_t Bank, uint32_t RefreshNum, uint32_t RegVal)
 {
-    uint32_t CommandTarget;
+    uint32_t CommandTarget = 0;
     FMC_SDRAM_CommandTypeDef Command;
     
     if (Bank == 1) {

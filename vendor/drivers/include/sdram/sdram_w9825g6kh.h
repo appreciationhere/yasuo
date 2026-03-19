@@ -12,7 +12,5 @@ void WriteSpeedTest(void);
 
 #endif // W9825G_SDRAM_TEST
 
-void bsp_InitExtSDRAM(void);
-
 #endif
 

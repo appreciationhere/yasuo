@@ -1,6 +1,7 @@
 #include "fmc.h"
 #include <drv_com.h>
-#include <fmc_com.h>
+#include <fmc/fmc_com.h>
+#include <sdram/sdram.h>
 #include <hal/board.h>
 
 #define SDRAM_TIMEOUT                    ((uint32_t)0xFFFF)
@@ -72,7 +73,6 @@ void bsp_InitExtSDRAM(void)
     */
     HAL_SDRAM_ProgramRefreshRate(&hsdram1, 2480);
 }
-
 
 #if W9825G_SDRAM_TEST
 /*

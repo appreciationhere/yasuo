@@ -11,7 +11,7 @@
  ******************************************************************************/
 #include "usart.h"
 #include "circbuf.h"
-#include "tty.h"
+#include <tty/tty.h>
 #include <string.h>
 
 #if (TTY_RXBUF_SIZE & (TTY_RXBUF_SIZE - 1)) != 0 

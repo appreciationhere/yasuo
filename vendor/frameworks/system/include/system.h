@@ -7,7 +7,7 @@
 #include "circbuf.h"
 #include "qlink.h"
 
-#define ASSERT(n) {if (0 == (n)){syslog(LOG_ERROR,"assert at file %s:%s[%d]", __FILE__,\
+#define ASSERT(n) {if (0 == (n)){syslog(LOG_ERR,"assert at file %s:%s[%d]", __FILE__,\
                      __func__, __LINE__);while(1);}};
 
 

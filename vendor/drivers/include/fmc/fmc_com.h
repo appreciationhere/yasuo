@@ -27,8 +27,4 @@ struct fmc_ops_s
     int (*refresh)(struct fmc_dev_s *dev, uint32_t RefreshRate);
 };
 
-#ifdef CONFIG_SDRAM_W9825G6KH
-#include <fmc/sdram_w9825g6kh.h>
-#endif // CONFIG_SDRAM_W9825G6KH
-
 #endif // !_FMC_H__
