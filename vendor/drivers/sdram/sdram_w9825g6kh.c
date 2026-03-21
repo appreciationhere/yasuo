@@ -1,8 +1,15 @@
-#include "fmc.h"
 #include <drv_com.h>
 #include <fmc/fmc_com.h>
 #include <sdram/sdram.h>
 #include <hal/board.h>
+
+#define GBG_TAG				"[sdram]"
+
+#define LOG_I(fmt, ...)      DRV_LOG_INF(GBG_TAG fmt, ##__VA_ARGS__)
+#define LOG_E(fmt, ...)      DRV_LOG_ERR(GBG_TAG fmt, ##__VA_ARGS__)
+#define LOG_D(fmt, ...)      DRV_LOG_DBG(GBG_TAG fmt, ##__VA_ARGS__)
+#define LOG_M(fmt, ...) \
+    DRV_LOG_INF(GBG_TAG "[%s][%d] " fmt, __func__, __LINE__, ##__VA_ARGS__)
 
 #define SDRAM_TIMEOUT                    ((uint32_t)0xFFFF)
 #define REFRESH_COUNT                    ((uint32_t)1543)    /* SDRAM自刷新计数 */  
@@ -19,9 +26,17 @@
 #define SDRAM_MODEREG_WRITEBURST_MODE_PROGRAMMED ((uint16_t)0x0000)
 #define SDRAM_MODEREG_WRITEBURST_MODE_SINGLE     ((uint16_t)0x0200)
 
+
+struct sdram_w9825g6kh_dev_s
+{
+	struct sdram_w9825g_config_s config;
+};
+struct sdram_w9825g6kh_dev_s* g_priv;
+
 static int SDRAM_SendCommand(uint32_t CommandMode, uint32_t Bank, uint32_t RefreshNum, uint32_t RegVal)
 {
     uint32_t CommandTarget = 0;
+	int ret = 0;
     FMC_SDRAM_CommandTypeDef Command;
     
     if (Bank == 1) {
@@ -34,44 +49,61 @@ static int SDRAM_SendCommand(uint32_t CommandMode, uint32_t Bank, uint32_t Refre
     Command.CommandTarget = CommandTarget;
     Command.AutoRefreshNumber = RefreshNum;
     Command.ModeRegisterDefinition = RegVal;
-    
-    if (HAL_SDRAM_SendCommand(&hsdram1, &Command, 0x1000) != HAL_OK) {
-        return -1;
+    ret = HAL_SDRAM_SendCommand(&hsdram1, &Command, 0x1000);
+    if (HAL_OK != ret) {
+		LOG_M("ret:%d", ret);
+        return ret;
     }
-    
-    return 0;
+    return ret;
 }
 
-void bsp_InitExtSDRAM(void)
+void sdram_w9825g6kh_init(int devno, struct sdram_w9825g_config_s* config)
 {
-	uint32_t temp;
-/* 1. 时钟使能命令 */
-    SDRAM_SendCommand(FMC_SDRAM_CMD_CLK_ENABLE, 1, 1, 0);
+	struct sdram_w9825g6kh_dev_s* priv = NULL;
+	priv = DRV_MALLOC(sizeof(struct sdram_w9825g_config_s));
 
+	uint32_t temp;
+	int ret = 0;
+/* 1. 时钟使能命令 */
+
+    ret |= SDRAM_SendCommand(FMC_SDRAM_CMD_CLK_ENABLE, 1, 1, 0);
     /* 2. 延时，至少100us */
-    HAL_Delay(1);
+    DRV_DELAY_MS(1);
     
     /* 3. SDRAM全部预充电命令 */
-    SDRAM_SendCommand(FMC_SDRAM_CMD_PALL, 1, 1, 0);
-    
+    ret |= SDRAM_SendCommand(FMC_SDRAM_CMD_PALL, 1, 1, 0);
     /* 4. 自动刷新命令 */
-    SDRAM_SendCommand(FMC_SDRAM_CMD_AUTOREFRESH_MODE, 1, 8, 0);
-    
+    ret |= SDRAM_SendCommand(FMC_SDRAM_CMD_AUTOREFRESH_MODE, 1, 8, 0);
     /* 5. 配置SDRAM模式寄存器 */   
     temp = (uint32_t)SDRAM_MODEREG_BURST_LENGTH_1            |          //设置突发长度：1
                      SDRAM_MODEREG_BURST_TYPE_SEQUENTIAL     |          //设置突发类型：连续
                      SDRAM_MODEREG_CAS_LATENCY_3             |          //设置CL值：3
                      SDRAM_MODEREG_OPERATING_MODE_STANDARD   |          //设置操作模式：标准
                      SDRAM_MODEREG_WRITEBURST_MODE_SINGLE;              //设置突发写模式：单点访问  
-    SDRAM_SendCommand(FMC_SDRAM_CMD_LOAD_MODE, 1, 1, temp);
-    
+    ret |= SDRAM_SendCommand(FMC_SDRAM_CMD_LOAD_MODE, 1, 1, temp);
     /* 6. 设置自刷新频率 */
     /*
         SDRAM refresh period / Number of rows）*SDRAM时钟速度 – 20
       = 64000(64 ms) / 4096 *108MHz - 20
       = 1667.5 取值1668
     */
-    HAL_SDRAM_ProgramRefreshRate(&hsdram1, 2480);
+    ret |= HAL_SDRAM_ProgramRefreshRate(&hsdram1, 2480);
+
+	HAL_Delay(1);
+	LOG_M("ret:%d", ret);
+
+	volatile uint32_t *test_addr = (uint32_t*)SDRAM_ADDR_SART;
+    *test_addr = 0x12345678;
+    if (*test_addr != 0x12345678) {
+        LOG_M("SDRAM test failed!");
+		ret = -1;
+		goto _err;
+    }
+	return ret;
+_err:
+	if (priv)
+		FREE(priv);
+	return ret;
 }
 
 #if W9825G_SDRAM_TEST
@@ -162,48 +194,45 @@ void ReadSpeedTest(void)
 	/* 设置初始化值并记下开始时间 */
 	pBuf = (uint32_t *)SDRAM_ADDR_SART;
 	iTime1 = GET_TICK_MS();	
-	DRV_LOG_INF("test buf1 : %lu", pBuf[1]);
-	// pBuf[1] = 100;
-	// DRV_LOG_INF("test buf2 : %lu", pBuf[1]);
-	/* 读取SDRAM所有空间数据 */	
-	// for (i = 1024*1024/4; i >0 ; i--)
-	// {
-	// 	ulTemp = *pBuf++;
-	// 	ulTemp = *pBuf++;
-	// 	ulTemp = *pBuf++;
-	// 	ulTemp = *pBuf++;
-	// 	ulTemp = *pBuf++;
-	// 	ulTemp = *pBuf++;
-	// 	ulTemp = *pBuf++;
-	// 	ulTemp = *pBuf++;
+	/* 读取SDRAM所有空间数据 */
+	for (i = 1024 * 1024/4; i >0 ; i--)
+	{
+		ulTemp = *pBuf++;
+		ulTemp = *pBuf++;
+		ulTemp = *pBuf++;
+		ulTemp = *pBuf++;
+		ulTemp = *pBuf++;
+		ulTemp = *pBuf++;
+		ulTemp = *pBuf++;
+		ulTemp = *pBuf++;
 
-	// 	ulTemp = *pBuf++;
-	// 	ulTemp = *pBuf++;
-	// 	ulTemp = *pBuf++;
-	// 	ulTemp = *pBuf++;
-	// 	ulTemp = *pBuf++;
-	// 	ulTemp = *pBuf++;
-	// 	ulTemp = *pBuf++;
-	// 	ulTemp = *pBuf++;
+		ulTemp = *pBuf++;
+		ulTemp = *pBuf++;
+		ulTemp = *pBuf++;
+		ulTemp = *pBuf++;
+		ulTemp = *pBuf++;
+		ulTemp = *pBuf++;
+		ulTemp = *pBuf++;
+		ulTemp = *pBuf++;
 		
-	// 	ulTemp = *pBuf++;
-	// 	ulTemp = *pBuf++;
-	// 	ulTemp = *pBuf++;
-	// 	ulTemp = *pBuf++;
-	// 	ulTemp = *pBuf++;
-	// 	ulTemp = *pBuf++;
-	// 	ulTemp = *pBuf++;
-	// 	ulTemp = *pBuf++;
+		ulTemp = *pBuf++;
+		ulTemp = *pBuf++;
+		ulTemp = *pBuf++;
+		ulTemp = *pBuf++;
+		ulTemp = *pBuf++;
+		ulTemp = *pBuf++;
+		ulTemp = *pBuf++;
+		ulTemp = *pBuf++;
 		
-	// 	ulTemp = *pBuf++;
-	// 	ulTemp = *pBuf++;
-	// 	ulTemp = *pBuf++;
-	// 	ulTemp = *pBuf++;
-	// 	ulTemp = *pBuf++;
-	// 	ulTemp = *pBuf++;
-	// 	ulTemp = *pBuf++;
-	// 	ulTemp = *pBuf++;
-	// }
+		ulTemp = *pBuf++;
+		ulTemp = *pBuf++;
+		ulTemp = *pBuf++;
+		ulTemp = *pBuf++;
+		ulTemp = *pBuf++;
+		ulTemp = *pBuf++;
+		ulTemp = *pBuf++;
+		ulTemp = *pBuf++;
+	}
 	iTime2 = GET_TICK_MS();	/* 记下结束时间 */
 
 	/* 打印速度 */

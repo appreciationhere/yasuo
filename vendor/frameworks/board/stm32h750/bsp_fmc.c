@@ -35,7 +35,7 @@ static int SDRAM_SendCommand(uint32_t CommandMode, uint32_t Bank, uint32_t Refre
     if (HAL_SDRAM_SendCommand(&hsdram1, &Command, 0x1000) != HAL_OK) {
         return -1;
     }
-    
+
     return 0;
 }
 
@@ -74,7 +74,7 @@ int fmc_refresh(struct fmc_dev_s *dev, uint32_t RefreshRate)
     return -ret;
 }
 
-void* board_stm32h750_fmc_init(int instance)
+void* bsp_board_fmc_init(int instance)
 {
     void* ret = NULL;
     switch (instance)

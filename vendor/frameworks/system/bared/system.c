@@ -21,10 +21,10 @@ static void system_async_work_cb(async_work_t *w, void *object, void *params)
     }
 }
 
-void printf_onece(void* argc) {
-    timer_item_t* item = (timer_item_t*)argc;
-    syslog(LOG_INFO, "6661 0x%x", &item->r_node);
-}
+// void printf_onece(void* argc) {
+//     timer_item_t* item = (timer_item_t*)argc;
+//     syslog(LOG_INFO, "6661 0x%x", &item->r_node);
+// }
 
 static void system_idle_process(void)
 {
@@ -36,10 +36,6 @@ static void system_idle_process(void)
         syslog(LOG_INFO, "now second: %lu, addr aaa:%p", cnt_s, &aaa);
         ++cnt_s;
         last_ticl = get_tick();
-        if (cnt_s % 10 == 0) {
-            void* timer1 =  timer_creat();
-            timer_start(timer1, printf_onece, 200, 1000);
-        }
     }
 }
 

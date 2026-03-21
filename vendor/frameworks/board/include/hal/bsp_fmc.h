@@ -6,6 +6,6 @@
   * @param instance: switch instance you want
   * @retval the point of fmc_dev_s
   */
-void* board_stm32h750_fmc_init(int instance);
+void* bsp_board_fmc_init(int instance);
 
 #endif // !_BSP_FMC_H__
