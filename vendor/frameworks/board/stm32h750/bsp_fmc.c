@@ -1,13 +1,14 @@
-#include <fmc/fmc_com.h>
+#include <sdram/sdram.h>
 #include <board_com.h>
-#include "fmc.h"
+#include <hal/bsp_fmc.h>
+
 
 /* fmc ops */
 static int fmc_transfer(struct fmc_dev_s *dev,
                         struct fmc_msg_s *msgs, int count);
 int fmc_refresh(struct fmc_dev_s *dev, uint32_t RefreshRate);
 
-const struct fmc_ops_s fmc_ops = {
+const static struct fmc_ops_s fmc_ops = {
     .refresh = fmc_refresh,
     .transfer = fmc_transfer
 };

@@ -1,7 +1,7 @@
 #include <drv_com.h>
-#include <fmc/fmc_com.h>
 #include <sdram/sdram.h>
 #include <hal/board.h>
+#include <hal/bsp_fmc.h>
 
 #define GBG_TAG				"[sdram]"
 
@@ -29,67 +29,52 @@
 
 struct sdram_w9825g6kh_dev_s
 {
+	struct fmc_dev_s		     lower;
 	struct sdram_w9825g_config_s config;
 };
+
 struct sdram_w9825g6kh_dev_s* g_priv;
 
-static int SDRAM_SendCommand(uint32_t CommandMode, uint32_t Bank, uint32_t RefreshNum, uint32_t RegVal)
-{
-    uint32_t CommandTarget = 0;
-	int ret = 0;
-    FMC_SDRAM_CommandTypeDef Command;
-    
-    if (Bank == 1) {
-        CommandTarget = FMC_SDRAM_CMD_TARGET_BANK1;
-    } else if (Bank == 2) {
-        CommandTarget = FMC_SDRAM_CMD_TARGET_BANK2;
-    }
-    
-    Command.CommandMode = CommandMode;
-    Command.CommandTarget = CommandTarget;
-    Command.AutoRefreshNumber = RefreshNum;
-    Command.ModeRegisterDefinition = RegVal;
-    ret = HAL_SDRAM_SendCommand(&hsdram1, &Command, 0x1000);
-    if (HAL_OK != ret) {
-		LOG_M("ret:%d", ret);
-        return ret;
-    }
-    return ret;
-}
-
-void sdram_w9825g6kh_init(int devno, struct sdram_w9825g_config_s* config)
+int sdram_w9825g6kh_init(int devno, struct sdram_w9825g_config_s* config)
 {
 	struct sdram_w9825g6kh_dev_s* priv = NULL;
-	priv = DRV_MALLOC(sizeof(struct sdram_w9825g_config_s));
-
-	uint32_t temp;
 	int ret = 0;
-/* 1. 时钟使能命令 */
+	uint32_t temp = 0;
+	struct fmc_msg_s msg = {
+		BSP_FMC_SDRAM_CMD_CLK_ENABLE, 1, 1, 0
+	};
+	priv = DRV_MALLOC(sizeof(struct sdram_w9825g_config_s));
+	priv->config = *config;
 
-    ret |= SDRAM_SendCommand(FMC_SDRAM_CMD_CLK_ENABLE, 1, 1, 0);
+	/* 1. 时钟使能命令 */
+	ret |= priv->config.bus->transfer(&(priv->lower), &msg, 1);
+
     /* 2. 延时，至少100us */
     DRV_DELAY_MS(1);
-    
     /* 3. SDRAM全部预充电命令 */
-    ret |= SDRAM_SendCommand(FMC_SDRAM_CMD_PALL, 1, 1, 0);
+    msg = (struct fmc_msg_s){BSP_FMC_SDRAM_CMD_PALL, 1, 1, 0 };
+	ret |= priv->config.bus->transfer(&(priv->lower), &msg, 1);
     /* 4. 自动刷新命令 */
-    ret |= SDRAM_SendCommand(FMC_SDRAM_CMD_AUTOREFRESH_MODE, 1, 8, 0);
+    msg = (struct fmc_msg_s){BSP_FMC_SDRAM_CMD_AUTOREFRESH_MODE, 1, 8, 0 };
+	ret |= priv->config.bus->transfer(&(priv->lower), &msg, 1);
     /* 5. 配置SDRAM模式寄存器 */   
     temp = (uint32_t)SDRAM_MODEREG_BURST_LENGTH_1            |          //设置突发长度：1
                      SDRAM_MODEREG_BURST_TYPE_SEQUENTIAL     |          //设置突发类型：连续
                      SDRAM_MODEREG_CAS_LATENCY_3             |          //设置CL值：3
                      SDRAM_MODEREG_OPERATING_MODE_STANDARD   |          //设置操作模式：标准
                      SDRAM_MODEREG_WRITEBURST_MODE_SINGLE;              //设置突发写模式：单点访问  
-    ret |= SDRAM_SendCommand(FMC_SDRAM_CMD_LOAD_MODE, 1, 1, temp);
+    msg = (struct fmc_msg_s){BSP_FMC_SDRAM_CMD_LOAD_MODE, 1, 1, temp};
+	ret |= priv->config.bus->transfer(&(priv->lower), &msg, 1);
     /* 6. 设置自刷新频率 */
     /*
         SDRAM refresh period / Number of rows）*SDRAM时钟速度 – 20
       = 64000(64 ms) / 4096 *108MHz - 20
       = 1667.5 取值1668
     */
-    ret |= HAL_SDRAM_ProgramRefreshRate(&hsdram1, 2480);
+    msg = (struct fmc_msg_s){BSP_FMC_SDRAM_CMD_LOAD_MODE, 1, 1, temp};
+	ret |= priv->config.bus->refresh(&(priv->lower), 2480);
 
-	HAL_Delay(1);
+	DRV_DELAY_MS(1);
 	LOG_M("ret:%d", ret);
 
 	volatile uint32_t *test_addr = (uint32_t*)SDRAM_ADDR_SART;
@@ -106,7 +91,7 @@ _err:
 	return ret;
 }
 
-#if W9825G_SDRAM_TEST
+#if SDRAM_TEST_FUC
 /*
 *********************************************************************************************************
 *	函 数 名: WriteSpeedTest

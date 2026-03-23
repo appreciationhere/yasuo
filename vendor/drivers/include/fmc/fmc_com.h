@@ -1,12 +1,9 @@
-#ifndef _FMC_H__
-#define _FMC_H__
+#ifndef _FMC_COM_H__
+#define _FMC_COM_H__
 
 #include <common.h>
 
-struct fmc_dev_s
-{
-    const struct fmc_ops_s* ops; /* FMC vtable */
-};
+struct fmc_dev_s;
 
 struct fmc_msg_s
 {
@@ -15,9 +12,8 @@ struct fmc_msg_s
     uint32_t RefreshNum;
     uint32_t RegVal;
 };
-
-/* This structure contains the full state of I2C as needed for a specific
- * transfer.  It is passed to I2C methods so that I2C transfer may be
+/* This structure contains the full state of FMC as needed for a specific
+ * transfer.  It is passed to FMC methods so that FMC transfer may be
  * performed in a thread safe manner.
  */
 struct fmc_ops_s
@@ -27,4 +23,11 @@ struct fmc_ops_s
     int (*refresh)(struct fmc_dev_s *dev, uint32_t RefreshRate);
 };
 
-#endif // !_FMC_H__
+struct fmc_dev_s
+{
+    const struct fmc_ops_s* ops; /* FMC vtable */
+};
+
+
+
+#endif // !_FMC_COM_H__

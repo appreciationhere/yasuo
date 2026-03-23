@@ -1,6 +1,7 @@
 ifeq ($(CONFIG_SDRAM_W9825G6KH), y)
 C_SOURCES += $(wildcard $(DRIVERS_DIR)/sdram/sdram_w9825g6kh.c)
 endif
+C_SOURCES += $(wildcard $(DRIVERS_DIR)/sdram/board_sdram.c)
 ifeq ($(CONFIG_UART_TTY), y)
 C_SOURCES += $(wildcard $(DRIVERS_DIR)/tty/uart_tty.c)
 endif

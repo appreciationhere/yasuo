@@ -8,7 +8,7 @@ int board_init_pre(void)
 {
     int ret = 0;
     syslog(LOG_INFO, "board_init_pre start ...");
-    bsp_InitExtSDRAM();
+    board_sdram_init(0, 0);
     syslog(LOG_INFO, "board_init_pre end ...");
     return ret;
 }
