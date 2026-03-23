@@ -106,7 +106,8 @@ void sys_msleep(uint32_t ms)
     uint32_t tick = get_tick();
     module_task_status_change(tid, TASK_STATUS_DELAY);
     while (get_tick() - tick < ms) {
-        system_handler();
+        if (get_system_init_flag())
+            system_handler();
     }
     module_task_status_change(tid, TASK_STATUS_RUN);
 }

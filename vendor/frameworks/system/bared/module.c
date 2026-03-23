@@ -3,6 +3,7 @@
 static void nop_process(void);
 
 struct task_moudle_s    g_task_moudle;
+static bool flag_init = false;
 
 #define GET_TICK                  get_tick     
 #define INF(format, ...)          syslog(LOG_INFO, format, ##__VA_ARGS__)     
@@ -49,6 +50,14 @@ unsigned int get_tick(void)
 }
 
 /*
+ * @brief       获取系统初始化状态
+ */
+bool get_system_init_flag(void)
+{
+	return flag_init;
+}
+
+/*
  * @brief       超时判断
  * @param[in]   start   - 起始时间
  * @param[in]   timeout - 超时时间(ms)
@@ -92,6 +101,8 @@ void module_task_init(void)
 
     extern int board_init_final(void);
     board_init_final();
+
+    flag_init = true;
 }
 
 /*

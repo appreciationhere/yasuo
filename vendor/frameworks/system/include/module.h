@@ -88,5 +88,6 @@ void module_task_process(void);
 struct task_node_s* module_get_task_node(unsigned char tid);
 unsigned char module_get_task_id(void);
 void module_task_status_change(unsigned char tid, unsigned char status);
+bool get_system_init_flag(void);
 
 #endif

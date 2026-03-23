@@ -29,34 +29,30 @@
 
 struct sdram_w9825g6kh_dev_s
 {
-	struct fmc_dev_s		     lower;
 	struct sdram_w9825g_config_s config;
 };
 
-struct sdram_w9825g6kh_dev_s* g_priv;
+struct sdram_w9825g6kh_dev_s g_priv;
 
 int sdram_w9825g6kh_init(int devno, struct sdram_w9825g_config_s* config)
 {
-	struct sdram_w9825g6kh_dev_s* priv = NULL;
+	struct sdram_w9825g6kh_dev_s* priv = &g_priv;
 	int ret = 0;
 	uint32_t temp = 0;
 	struct fmc_msg_s msg = {
 		BSP_FMC_SDRAM_CMD_CLK_ENABLE, 1, 1, 0
 	};
-	priv = DRV_MALLOC(sizeof(struct sdram_w9825g_config_s));
 	priv->config = *config;
-
 	/* 1. 时钟使能命令 */
-	ret |= priv->config.bus->transfer(&(priv->lower), &msg, 1);
-
+	ret |= priv->config.bus->ops->transfer(priv->config.bus, &msg, 1);
     /* 2. 延时，至少100us */
     DRV_DELAY_MS(1);
     /* 3. SDRAM全部预充电命令 */
     msg = (struct fmc_msg_s){BSP_FMC_SDRAM_CMD_PALL, 1, 1, 0 };
-	ret |= priv->config.bus->transfer(&(priv->lower), &msg, 1);
+	ret |= priv->config.bus->ops->transfer(priv->config.bus, &msg, 1);
     /* 4. 自动刷新命令 */
     msg = (struct fmc_msg_s){BSP_FMC_SDRAM_CMD_AUTOREFRESH_MODE, 1, 8, 0 };
-	ret |= priv->config.bus->transfer(&(priv->lower), &msg, 1);
+	ret |= priv->config.bus->ops->transfer(priv->config.bus, &msg, 1);
     /* 5. 配置SDRAM模式寄存器 */   
     temp = (uint32_t)SDRAM_MODEREG_BURST_LENGTH_1            |          //设置突发长度：1
                      SDRAM_MODEREG_BURST_TYPE_SEQUENTIAL     |          //设置突发类型：连续
@@ -64,15 +60,14 @@ int sdram_w9825g6kh_init(int devno, struct sdram_w9825g_config_s* config)
                      SDRAM_MODEREG_OPERATING_MODE_STANDARD   |          //设置操作模式：标准
                      SDRAM_MODEREG_WRITEBURST_MODE_SINGLE;              //设置突发写模式：单点访问  
     msg = (struct fmc_msg_s){BSP_FMC_SDRAM_CMD_LOAD_MODE, 1, 1, temp};
-	ret |= priv->config.bus->transfer(&(priv->lower), &msg, 1);
+	ret |= priv->config.bus->ops->transfer(priv->config.bus, &msg, 1);
     /* 6. 设置自刷新频率 */
     /*
         SDRAM refresh period / Number of rows）*SDRAM时钟速度 – 20
       = 64000(64 ms) / 4096 *108MHz - 20
       = 1667.5 取值1668
     */
-    msg = (struct fmc_msg_s){BSP_FMC_SDRAM_CMD_LOAD_MODE, 1, 1, temp};
-	ret |= priv->config.bus->refresh(&(priv->lower), 2480);
+	ret |= priv->config.bus->ops->refresh(priv->config.bus, 2480);
 
 	DRV_DELAY_MS(1);
 	LOG_M("ret:%d", ret);
@@ -86,8 +81,6 @@ int sdram_w9825g6kh_init(int devno, struct sdram_w9825g_config_s* config)
     }
 	return ret;
 _err:
-	if (priv)
-		FREE(priv);
 	return ret;
 }
 
