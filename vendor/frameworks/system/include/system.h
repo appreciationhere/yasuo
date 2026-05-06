@@ -35,14 +35,14 @@ typedef struct
 bool system_async_work_add(sys_async_work_func_t work, void *params);
 
 void system_handler(void);
+uint32_t sys_msleep(uint32_t ms);
 
 /* mm manager */
 int su_mm_init(void* start, void* end);
 void* su_malloc(uint32_t size);
 void su_free(void* note);
 
-void sys_msleep(uint32_t ms);
-
+/* timer interface */
 void timer_proc(void);
 void* timer_creat(void);
 int timer_start(void* timer, timer_func_t cb, uint32_t first, uint32_t time);

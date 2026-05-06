@@ -100,7 +100,7 @@ void bsp_init(void)
     tty.init(0);
 }
 
-void sys_msleep(uint32_t ms)
+uint32_t sys_msleep(uint32_t ms)
 {
     uint8_t tid = module_get_task_id();
     uint32_t tick = get_tick();

@@ -51,7 +51,7 @@ static unsigned int uart_write(const void *buf, unsigned int len)
     usart_print_send((uint8_t*)buf, len);
     return ret; 
 }
-#include "syslog.h"
+
 /*
  * @brief	    读取串口接收缓冲区的数据
  * @param[in]   buf       -  数据缓存

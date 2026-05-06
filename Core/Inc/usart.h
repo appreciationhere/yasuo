@@ -42,7 +42,8 @@ void MX_UART4_Init(void);
 
 /* USER CODE BEGIN Prototypes */
 void usart_print_send(const uint8_t* data, int len);
-void Usart_Receive_Data(UART_HandleTypeDef *huart);
+void Usart4_Irq_trigger(void);
+void Usart4_Irq_Handle(void);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

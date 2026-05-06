@@ -41,7 +41,7 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-
+void Irq_Handle(void);
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -52,7 +52,6 @@
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-static void MPU_Config(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -70,11 +69,8 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-
+  SCB->VTOR = 0x90000000;
   /* USER CODE END 1 */
-
-  /* MPU Configuration--------------------------------------------------------*/
-  MPU_Config();
 
   /* MCU Configuration--------------------------------------------------------*/
 
@@ -111,6 +107,7 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
     system_handler();
+    Irq_Handle();
 		// HAL_Delay(1000);
 		// HAL_GPIO_WritePin(GPIOI, GPIO_PIN_8, 1);
 		// HAL_Delay(1000);
@@ -196,20 +193,11 @@ void gpio_work(void *params)
     HAL_GPIO_WritePin(GPIOI, GPIO_PIN_8, 0);
   }
 }
-/* USER CODE END 4 */
-
- /* MPU Configuration */
-
-void MPU_Config(void)
+void Irq_Handle(void)
 {
-
-  /* Disables the MPU */
-  HAL_MPU_Disable();
-
-  /* Enables the MPU */
-  HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);
-
+  Usart4_Irq_Handle();
 }
+/* USER CODE END 4 */
 
 /**
   * @brief  This function is executed in case of error occurrence.

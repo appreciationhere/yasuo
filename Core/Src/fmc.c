@@ -22,7 +22,18 @@
 #include "fmc.h"
 
 /* USER CODE BEGIN 0 */
+int  main_loop(void)
+{
+  int a = 0;
+  for (int i = 0; i < 100; ++i)
+  ;
+  while (1)
+  {
+    /* code */
 
+  }
+  
+} 
 /* USER CODE END 0 */
 
 SDRAM_HandleTypeDef hsdram1;
