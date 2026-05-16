@@ -24,7 +24,8 @@
 
 /* USER CODE BEGIN 0 */
 static uint8_t buffer[64];
-static bool huart4_irq_event_flag;
+static const uint16_t buffer_len = sizeof(buffer)/sizeof(uint8_t);
+static uint8_t huart4_irq_event_flag;
 /* USER CODE END 0 */
 
 UART_HandleTypeDef huart4;
@@ -75,7 +76,6 @@ void MX_UART4_Init(void)
   __HAL_UART_ENABLE_IT(&huart4, UART_IT_IDLE);
   HAL_UART_Receive_DMA(&huart4, buffer, sizeof(buffer));
   /* USER CODE END UART4_Init 2 */
-
 }
 
 void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
@@ -201,31 +201,36 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 /* USER CODE BEGIN 1 */
 static inline uint32_t usart4_get_receive_len(void)
 {
-  return sizeof(buffer) - __HAL_DMA_GET_COUNTER(huart4.hdmarx);
+  return buffer_len - __HAL_DMA_GET_COUNTER(huart4.hdmarx);
 }
 void usart_print_send(const uint8_t* data, int len)
 {
   HAL_UART_Transmit(&huart4, data, len, 0xFFFF);
 }
-
-void Usart4_Irq_trigger(void)
+uint8_t Usart4_Irq_trigger(void)
 {
-  if(RESET != __HAL_UART_GET_FLAG(&huart4, UART_FLAG_IDLE))   //判断是否是空闲中断
-  {
-    huart4_irq_event_flag = true;
-      __HAL_UART_CLEAR_IDLEFLAG(&huart4);
+  uint8_t ret = 0;
+  if(RESET != __HAL_UART_GET_FLAG(&huart4, UART_FLAG_IDLE)) {   //判断是否是空闲中断
+    if (buffer_len - __HAL_DMA_GET_COUNTER(huart4.hdmarx))
+      ret = true;
+    __HAL_UART_CLEAR_IDLEFLAG(&huart4);
   }
+  if (ret) {
+    huart4_irq_event_flag = true;
+  }
+  return ret;
 }
 
-void Usart4_Irq_Handle(void)
+void Usart4_Irq_Handle(void* arg)
 {
   if (huart4_irq_event_flag) {
-  __disable_irq();
-  HAL_UART_DMAStop(&huart4);
-  tty_push_data(buffer, usart4_get_receive_len());
-  HAL_UART_Receive_DMA(&huart4, buffer, sizeof(buffer));
-  huart4_irq_event_flag = false;
-  __enable_irq();
+    // __disable_irq();
+    HAL_UART_DMAStop(&huart4);
+    huart4_irq_event_flag = false;
+    tty_push_data(buffer, usart4_get_receive_len());
+    HAL_UART_Receive_DMA(&huart4, buffer, sizeof(buffer));
+    HAL_UART_IRQHandler(&huart4);
+    // __enable_irq();
   }
 }
 /* USER CODE END 1 */

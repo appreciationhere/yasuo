@@ -41,7 +41,6 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-void Irq_Handle(void);
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -53,7 +52,7 @@ void Irq_Handle(void);
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-
+static void Irq_Hanlder(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -107,8 +106,8 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
     system_handler();
-    Irq_Handle();
-		// HAL_Delay(1000);
+    Irq_Hanlder();
+    // HAL_Delay(1000);
 		// HAL_GPIO_WritePin(GPIOI, GPIO_PIN_8, 1);
 		// HAL_Delay(1000);
 		// HAL_GPIO_WritePin(GPIOI, GPIO_PIN_8, 0);
@@ -193,10 +192,12 @@ void gpio_work(void *params)
     HAL_GPIO_WritePin(GPIOI, GPIO_PIN_8, 0);
   }
 }
-void Irq_Handle(void)
+
+static void Irq_Hanlder(void)
 {
-  Usart4_Irq_Handle();
+  Usart4_Irq_Handle(NULL);
 }
+
 /* USER CODE END 4 */
 
 /**

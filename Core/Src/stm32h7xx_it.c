@@ -238,6 +238,7 @@ void UART4_IRQHandler(void)
 {
   /* USER CODE BEGIN UART4_IRQn 0 */
   Usart4_Irq_trigger();
+
   /* USER CODE END UART4_IRQn 0 */
   // HAL_UART_IRQHandler(&huart4);
   /* USER CODE BEGIN UART4_IRQn 1 */

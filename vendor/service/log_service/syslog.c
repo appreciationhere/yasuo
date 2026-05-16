@@ -1,6 +1,7 @@
 #include "syslog.h"
 #include <stdarg.h>
 #include <string.h>
+#include <stdio.h>
 #ifdef CONFIG_SYSLOG_PRINT_USART
 #include "usart.h"
 #endif
